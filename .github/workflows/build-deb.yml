@@ -9,12 +9,16 @@ on:
 
 jobs:
   deb:
-    name: ${{ matrix.image }}
+    name: ${{ matrix.tag }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        image: ['debian:12', 'debian:13', 'ubuntu:22.04', 'ubuntu:24.04']
+        include:
+          - { image: 'debian:12',    tag: debian12 }
+          - { image: 'debian:13',    tag: debian13 }
+          - { image: 'ubuntu:22.04', tag: ubuntu22.04 }
+          - { image: 'ubuntu:24.04', tag: ubuntu24.04 }
     container:
       image: ${{ matrix.image }}
     steps:
@@ -27,7 +31,7 @@ jobs:
             libgtk-3-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
             gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-gtk3 \
-            xvfb xauth adwaita-icon-theme ca-certificates git
+            xvfb xauth adwaita-icon-theme fonts-dejavu-core ca-certificates git
       - uses: actions/checkout@v4
       - name: Compila
         run: |
@@ -37,7 +41,8 @@ jobs:
         continue-on-error: true
         run: |
           mkdir -p selftest
-          xvfb-run -a -s "-screen 0 1280x800x24" ./build-deb/webcam-tv-smart-vision --self-test "$PWD/selftest" 2>&1 | grep self-test
+          export GST_DEBUG=2 GDK_BACKEND=x11
+          xvfb-run -a -s "-screen 0 1280x800x24" ./build-deb/webcam-tv-smart-vision --self-test "$PWD/selftest" 2>&1 | grep -E "self-test|ERROR|WARN" | head -60
           ls -la selftest
       - name: Pacchetto .deb
         run: |
@@ -51,7 +56,7 @@ jobs:
           webcam-tv-smart-vision --version
       - uses: actions/upload-artifact@v4
         with:
-          name: deb-${{ matrix.image }}
+          name: deb-${{ matrix.tag }}
           path: build-deb/*.deb
           if-no-files-found: error
 
