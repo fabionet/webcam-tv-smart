@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=WebCam and TV Smart Vision
+Comment=Anteprima, registrazione e ponte del segnale per webcam, schede TV e satellitari
+Comment[en]=Preview, record and bridge video from webcams, TV and satellite cards
+Exec=webcam-tv-smart-vision
+Icon=org.smartvision.WebCamTV
+Terminal=false
+Type=Application
+Categories=AudioVideo;Video;Recorder;TV;GNOME;GTK;
+Keywords=webcam;camera;tv;dvb;satellite;record;mp4;ogg;v4l2;
+StartupNotify=true
+X-GNOME-UsesNotifications=false

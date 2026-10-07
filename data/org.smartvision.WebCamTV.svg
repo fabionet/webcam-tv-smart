@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3584e4"/>
+      <stop offset="1" stop-color="#1c71d8"/>
+    </linearGradient>
+    <radialGradient id="lens" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#99c1f1"/>
+      <stop offset="0.5" stop-color="#1a5fb4"/>
+      <stop offset="1" stop-color="#0b2a55"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="24" fill="url(#bg)"/>
+  <!-- TV screen -->
+  <rect x="22" y="30" width="84" height="60" rx="8" fill="#241f31" stroke="#f6f5f4" stroke-width="4"/>
+  <rect x="44" y="92" width="40" height="6" rx="3" fill="#f6f5f4"/>
+  <!-- antenna -->
+  <path d="M52 18 L64 30 L76 18" fill="none" stroke="#f6f5f4" stroke-width="4" stroke-linecap="round"/>
+  <!-- webcam lens -->
+  <circle cx="64" cy="60" r="22" fill="url(#lens)" stroke="#f6f5f4" stroke-width="3"/>
+  <circle cx="64" cy="60" r="10" fill="#0b2a55"/>
+  <circle cx="58" cy="53" r="4" fill="#ffffff" opacity="0.8"/>
+  <!-- REC dot -->
+  <circle cx="96" cy="40" r="5" fill="#e01b24"/>
+</svg>

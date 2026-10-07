@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.smartvision.WebCamTV</id>
+  <name>WebCam and TV Smart Vision</name>
+  <summary>Webcam, TV e satellite: anteprima, registrazione MP4/OGG e ponte del segnale</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <description>
+    <p>Applicazione GNOME (GTK3 + GStreamer) per webcam UVC come Logitech C920/Brio, schede TV digitali terrestri e satellitari (DVB) e flussi di rete. Registra audio e video in MP4 (H.264/AAC) e OGG (Theora/Vorbis), scatta istantanee, espone i controlli V4L2 della webcam e inoltra il segnale verso dispositivi di uscita (v4l2loopback, uscite audio, secondo schermo).</p>
+  </description>
+  <launchable type="desktop-id">org.smartvision.WebCamTV.desktop</launchable>
+  <provides><binary>webcam-tv-smart-vision</binary></provides>
+  <content_rating type="oars-1.1"/>
+</component>

@@ -1,0 +1,19 @@
+webcam-tv-smart-vision (1.1.0) unstable; urgency=medium
+
+  * Nome della periferica di cattura mostrato nella pagina Sorgente, nella
+    barra del titolo e sull'anteprima; segnaposto "periferica non rilevata"
+    con tasto Cerca dispositivi quando nessuna webcam è collegata.
+  * Riconoscimento automatico della webcam appena collegata (hot-plug).
+  * Pacchetti .deb per Debian 12/13 e Ubuntu 22.04/24.04 (GitHub Actions).
+  * Guida illustrata in PDF installata in /usr/share/doc.
+  * Compatibilità con GLib 2.72 (Ubuntu 22.04).
+
+ -- Fabio Avallone <avallone.fabio@gmail.com>  Wed, 07 Oct 2026 22:40:00 +0200
+
+webcam-tv-smart-vision (1.0.0) unstable; urgency=medium
+
+  * Prima versione: anteprima webcam UVC / DVB / URL, registrazione MP4 e OGG,
+    controlli V4L2, sintonia e scansione DVB, ponte del segnale verso
+    v4l2loopback, uscite audio e finestra esterna.
+
+ -- Fabio Avallone <avallone.fabio@gmail.com>  Thu, 17 Sep 2026 21:30:00 +0200

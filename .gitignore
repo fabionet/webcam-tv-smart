@@ -1,0 +1,9 @@
+# cartelle di compilazione
+build/
+build-deb/
+build-container/
+# binari e pacchetti generati (pubblicati nelle release GitHub)
+dist/
+# file temporanei dell'auto-test
+selftest/
+*.log

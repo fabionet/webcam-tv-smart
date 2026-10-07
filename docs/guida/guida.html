@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>WebCam and TV Smart Vision – Guida illustrata</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+  :root { --blu: #1c71d8; --grigio: #5e5c64; --sfondo: #f6f5f4; --rosso: #e01b24; }
+  * { box-sizing: border-box; }
+  body { font-family: "Cantarell", "Noto Sans", "DejaVu Sans", sans-serif; color: #241f31; font-size: 11pt; line-height: 1.45; margin: 0; }
+  h1 { font-size: 26pt; color: var(--blu); margin: 0 0 4px; }
+  h2 { font-size: 17pt; color: var(--blu); border-bottom: 2px solid var(--blu); padding-bottom: 3px; margin: 0 0 12px; page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 16px 0 6px; color: #1a5fb4; page-break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  section { page-break-before: always; }
+  section.cover { page-break-before: auto; }
+  .cover { text-align: center; padding-top: 10mm; }
+  .cover img.icon { width: 36mm; height: 36mm; }
+  .cover .sub { font-size: 13pt; color: var(--grigio); margin-bottom: 12mm; }
+  .cover img.shot { width: 125mm; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+  .cover .ver { margin-top: 10mm; color: var(--grigio); font-size: 10pt; }
+  figure { margin: 6px 0 10px; text-align: center; page-break-inside: avoid; }
+  figure img { max-width: 74%; border-radius: 6px; box-shadow: 0 3px 14px rgba(0,0,0,.22); }
+  figure img.half { max-width: 56%; }
+  figcaption { font-size: 9.5pt; color: var(--grigio); margin-top: 6px; }
+  .box { background: var(--sfondo); border-left: 4px solid var(--blu); padding: 8px 12px; margin: 10px 0; border-radius: 4px; page-break-inside: avoid; }
+  .box.warn { border-color: #e5a50a; }
+  .box.ok { border-color: #2ec27e; }
+  .box b:first-child { color: var(--blu); }
+  code, pre { font-family: "Source Code Pro", "DejaVu Sans Mono", monospace; font-size: 9.5pt; }
+  code { background: #ececec; padding: 1px 4px; border-radius: 3px; }
+  pre { background: #2d2d2d; color: #f6f5f4; padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; page-break-inside: avoid; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #d5d3d0; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: var(--sfondo); }
+  kbd { border: 1px solid #bbb; border-bottom-width: 2px; border-radius: 3px; padding: 0 5px; font-size: 9.5pt; background: #fff; }
+  .steps li { margin-bottom: 5px; }
+  .toc ol { columns: 2; column-gap: 24px; padding-left: 20px; }
+  .toc li { margin-bottom: 3px; break-inside: avoid; }
+  .rec { color: var(--rosso); font-weight: bold; }
+  footer { position: fixed; bottom: 0; font-size: 8.5pt; color: var(--grigio); }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <img class="icon" src="../img/icona.png" alt="Icona">
+  <h1>WebCam and TV Smart Vision</h1>
+  <div class="sub">Guida illustrata all'uso – webcam, TV, satellite, registrazione e ponte del segnale</div>
+  <img class="shot" src="../img/schermata.png" alt="Finestra principale">
+  <div class="ver">Versione 1.1.0 · ottobre 2026 · Debian, Ubuntu e derivate · Licenza GPL-3.0</div>
+</section>
+
+<section class="toc">
+  <h2>Indice</h2>
+  <ol>
+    <li>Che cos'è e requisiti</li>
+    <li>Installazione (Debian, Ubuntu e derivate)</li>
+    <li>Prima accensione e periferica di cattura</li>
+    <li>La finestra principale</li>
+    <li>Pagina Sorgente</li>
+    <li>Pagina Webcam (Logitech C920 e altre UVC)</li>
+    <li>Pagina TV e satellite (DVB)</li>
+    <li>Pagina Rec: registrare in MP4 e OGG, istantanee</li>
+    <li>Pagina Uscite: il ponte del segnale</li>
+    <li>Scorciatoie da tastiera</li>
+    <li>Risoluzione dei problemi</li>
+    <li>Compilare dai sorgenti e creare il pacchetto</li>
+  </ol>
+  <div class="box"><b>Per chi è questa guida.</b> Per chi vuole usare una webcam USB (per esempio la Logitech C920), una scheda TV digitale terrestre o satellitare oppure un flusso di rete su un PC Linux con GNOME, registrare audio e video e, se serve, inoltrare lo stesso segnale ad altre applicazioni o a un secondo schermo. Non servono conoscenze tecniche: ogni passo è illustrato.</div>
+</section>
+
+<section>
+  <h2>1. Che cos'è e requisiti</h2>
+  <p><b>WebCam and TV Smart Vision</b> è un'applicazione per il desktop GNOME, scritta in C++ con GTK e GStreamer. Riunisce in una sola finestra di 800×600 pixel:</p>
+  <ul>
+    <li>l'<b>anteprima</b> di webcam UVC, schede TV/satellitari DVB e flussi di rete (RTSP, HTTP, file);</li>
+    <li>la <b>registrazione</b> audio e video in <b>MP4</b> (H.264 + AAC) e <b>OGG</b> (Theora + Vorbis) e le <b>istantanee</b> PNG;</li>
+    <li>i <b>controlli della webcam</b> (zoom, messa a fuoco, esposizione, bilanciamento del bianco, anti-sfarfallio…);</li>
+    <li>la <b>sintonia TV</b> con elenco canali, scansione e sintonia manuale;</li>
+    <li>il <b>ponte del segnale</b> verso una webcam virtuale (v4l2loopback), un'uscita audio e una finestra su un secondo schermo.</li>
+  </ul>
+  <h3>Requisiti</h3>
+  <table>
+    <tr><th>Sistema</th><td>Debian 12 o 13, Ubuntu 22.04 o 24.04 e tutte le derivate (Linux Mint, Pop!_OS, Zorin, elementary, MX Linux, Kubuntu…). Desktop GNOME consigliato; funziona anche su altri desktop con GTK 3.</td></tr>
+    <tr><th>Webcam</th><td>Qualsiasi webcam <b>UVC</b> (USB Video Class): Logitech C920, C920 HD Pro, C922, Brio 4K, StreamCam e la quasi totalità delle webcam USB in commercio.</td></tr>
+    <tr><th>Schede TV</th><td>Adattatori DVB-T/T2, DVB-C, DVB-S/S2 riconosciuti dal kernel Linux (compaiono come <code>/dev/dvb/adapterN</code>).</td></tr>
+    <tr><th>Software</th><td>GStreamer 1.16 o successivo con i set di plugin base, good, bad, ugly e libav (installati automaticamente dal pacchetto .deb).</td></tr>
+  </table>
+  <div class="box ok"><b>Driver: non serve installarne.</b> La Logitech C920 e le altre webcam UVC sono gestite direttamente dal kernel Linux con i moduli <code>uvcvideo</code> (video) e <code>snd-usb-audio</code> (microfono). Collegare la webcam è tutto ciò che serve. Nota: la C920 è una webcam Full HD 1080p; il modello Logitech 4K si chiama <b>Brio</b> e funziona allo stesso modo.</div>
+</section>
+
+<section>
+  <h2>2. Installazione (Debian, Ubuntu e derivate)</h2>
+  <h3>Dal pacchetto .deb (consigliato)</h3>
+  <ol class="steps">
+    <li>Apri la pagina <b>Releases</b> del progetto: <code>https://github.com/fabionet/webcam-tv-smart/releases</code>.</li>
+    <li>Scarica il pacchetto per la tua distribuzione (vedi tabella).</li>
+    <li>Installalo con un doppio clic (Software di GNOME) oppure da terminale:</li>
+  </ol>
+  <pre><code>sudo apt install ./webcam-tv-smart-vision_1.1.0_ubuntu24.04_amd64.deb</code></pre>
+  <table>
+    <tr><th>Distribuzione (e derivate)</th><th>Pacchetto da scaricare</th></tr>
+    <tr><td>Debian 12 "bookworm" – MX Linux 23</td><td><code>…_debian12_amd64.deb</code></td></tr>
+    <tr><td>Debian 13 "trixie"</td><td><code>…_debian13_amd64.deb</code></td></tr>
+    <tr><td>Ubuntu 22.04 – Linux Mint 21 – Pop!_OS 22.04 – Zorin 17 – elementary 7</td><td><code>…_ubuntu22.04_amd64.deb</code></td></tr>
+    <tr><td>Ubuntu 24.04 – Linux Mint 22 – Zorin 18</td><td><code>…_ubuntu24.04_amd64.deb</code></td></tr>
+  </table>
+  <p><code>apt</code> installa da solo le dipendenze (GStreamer, GTK). Al termine trovi <b>WebCam and TV Smart Vision</b> nel menu delle applicazioni; da terminale il comando è <code>webcam-tv-smart-vision</code>.</p>
+  <h3>Componenti facoltativi</h3>
+  <table>
+    <tr><th>Pacchetto</th><th>A cosa serve</th></tr>
+    <tr><td><code>dvb-tools</code></td><td>Scansione dei canali TV con <code>dvbv5-scan</code> (pagina TV, tasto Scansione).</td></tr>
+    <tr><td><code>v4l-utils</code></td><td>Lo script che imposta i valori consigliati della C920 al collegamento (regola udev).</td></tr>
+    <tr><td><code>v4l2loopback-dkms</code></td><td>Webcam virtuale per il ponte video, se il kernel non include già il modulo.</td></tr>
+    <tr><td><code>gstreamer1.0-pipewire</code></td><td>Elenco dei dispositivi audio con PipeWire (predefinito su Ubuntu 22.10+ e Debian 12+).</td></tr>
+  </table>
+  <pre><code>sudo apt install dvb-tools v4l-utils v4l2loopback-dkms gstreamer1.0-pipewire</code></pre>
+  <h3>Regola udev per la Logitech C920 (facoltativa)</h3>
+  <p>Crea il collegamento stabile <code>/dev/webcam-c920</code> e applica i valori consigliati (anti-sfarfallio 50 Hz, esposizione automatica, autofocus) ogni volta che colleghi la webcam:</p>
+  <pre><code>sudo cp /usr/share/webcam-tv-smart-vision/99-logitech-c920-smartvision.rules /etc/udev/rules.d/
+sudo udevadm control --reload</code></pre>
+</section>
+
+<section>
+  <h2>3. Prima accensione e periferica di cattura</h2>
+  <p>All'avvio l'applicazione cerca le periferiche di cattura collegate. Il <b>nome della periferica</b> compare in tre punti: nella barra in alto della pagina <i>Sorgente</i>, nel sottotitolo della finestra e nell'angolo in basso dell'anteprima (insieme a risoluzione e fotogrammi al secondo).</p>
+  <figure>
+    <img src="../img/schermata-nessuna-periferica.png" alt="Nessuna periferica rilevata">
+    <figcaption>Nessuna webcam collegata: l'area video mostra l'avviso con il tasto <b>Cerca dispositivi</b>; la barra in alto a destra ripete l'avviso con il tasto di aggiornamento.</figcaption>
+  </figure>
+  <div class="box"><b>La webcam non viene rilevata?</b> Collegala (preferibilmente a una porta USB 3, blu) e premi <b>Cerca dispositivi</b> oppure l'icona <b>⟳ Aggiorna</b>. Normalmente non serve nemmeno: il riconoscimento è automatico e, se nessuna sorgente è attiva, la webcam appena collegata viene selezionata e avviata da sola.</div>
+  <p>Quando una webcam è presente, la barra mostra il suo nome (per esempio <b>HD Pro Webcam C920</b>) e l'anteprima parte. Se l'ultima periferica usata non è più collegata, l'applicazione non passa in silenzio alla sorgente di prova: mostra l'avviso <i>Periferica non rilevata</i> con il nome ricordato, così sai subito che cosa manca.</p>
+</section>
+
+<section>
+  <h2>4. La finestra principale</h2>
+  <figure>
+    <img src="../img/schermata.png" alt="Finestra principale durante una registrazione">
+    <figcaption>La finestra durante una registrazione: a sinistra l'anteprima con il badge <span class="rec">● REC</span> e il tempo trascorso, a destra la barra laterale con le cinque pagine.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Elemento</th><th>Funzione</th></tr>
+    <tr><td>▶ / ■ (in alto a sinistra)</td><td>Avvia o ferma la sorgente selezionata.</td></tr>
+    <tr><td>📷 (in alto a sinistra)</td><td>Scatta un'istantanea PNG nella cartella di destinazione (<kbd>Ctrl</kbd>+<kbd>S</kbd>).</td></tr>
+    <tr><td>● rosso (in alto a destra)</td><td>Avvia o ferma la registrazione (<kbd>Ctrl</kbd>+<kbd>R</kbd>). Diventa rosso pieno mentre registra.</td></tr>
+    <tr><td>☰ menu</td><td>Aggiorna dispositivi, Apri cartella registrazioni, Schermo intero, Informazioni.</td></tr>
+    <tr><td>Schede Sorgente · Webcam · TV · Rec · Uscite</td><td>Le cinque pagine della barra laterale, descritte nei capitoli seguenti.</td></tr>
+    <tr><td>Barra di stato</td><td>Ultimo messaggio (file salvato, errori, periferiche trovate) e indicatore del livello del microfono.</td></tr>
+  </table>
+  <p>La finestra parte a 800×600 ma si può ingrandire liberamente: l'anteprima occupa tutto lo spazio disponibile mantenendo le proporzioni. Con <kbd>F11</kbd> l'anteprima va a schermo intero e la barra laterale scompare; <kbd>Esc</kbd> torna indietro.</p>
+</section>
+
+<section>
+  <h2>5. Pagina Sorgente</h2>
+  <figure>
+    <img class="half" src="../img/schermata-sorgente.png" alt="Pagina Sorgente">
+    <figcaption>La pagina Sorgente con la barra della periferica, il selettore della sorgente, l'audio e l'orientamento dell'immagine.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Comando</th><th>Descrizione</th></tr>
+    <tr><td>Barra periferica + ⟳</td><td>Nome della webcam rilevata (o avviso) e tasto di nuova ricerca.</td></tr>
+    <tr><td>Sorgente video</td><td>Elenco di tutto ciò che è collegato: webcam (con il nodo <code>/dev/videoN</code>), schede TV, <i>Flusso di rete / file (URL)</i> e <i>Sorgente di prova</i> (mira colorata con tono a 440 Hz, utile per provare registrazione e uscite senza hardware).</td></tr>
+    <tr><td>Formato</td><td>Solo per le webcam: codifica, risoluzione e fotogrammi al secondo offerti dal dispositivo (es. <code>MJPG 1920x1080 @ 30 fps</code>). <i>Automatico</i> sceglie MJPEG 1280×720 a 30 fps, il miglior compromesso tra qualità e carico USB. La scelta viene ricordata per ogni webcam.</td></tr>
+    <tr><td>URL</td><td>Per i flussi di rete: <code>rtsp://…</code>, <code>http://…</code>, <code>file:///…</code>. Premi <kbd>Invio</kbd> per avviare.</td></tr>
+    <tr><td>Ingresso audio</td><td><i>Automatico</i> abbina il microfono della webcam (riconosciuto dal nome, es. "C920"); <i>Audio della sorgente</i> usa l'audio del canale TV o del flusso; <i>Nessun audio</i>; oppure un microfono specifico.</td></tr>
+    <tr><td>Guadagno</td><td>Amplificazione del microfono (1,0 = invariato); agisce anche sulla registrazione.</td></tr>
+    <tr><td>Orientamento</td><td>Normale, specchiata, capovolta, ruotata di 90° o 180°: utile per webcam montate al contrario o per vedersi come allo specchio.</td></tr>
+    <tr><td>Avvia / Ferma / ⟳</td><td>Controllo manuale della sorgente e aggiornamento dell'elenco.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>6. Pagina Webcam (Logitech C920 e altre UVC)</h2>
+  <figure>
+    <img class="half" src="../img/schermata-webcam.png" alt="Pagina Webcam">
+    <figcaption>La pagina Webcam. Con una webcam collegata, sotto i profili rapidi compaiono tutti i controlli che il driver mette a disposizione, uno per riga.</figcaption>
+  </figure>
+  <p>I controlli vengono letti direttamente dal dispositivo tramite l'interfaccia V4L2 del kernel, quindi l'elenco dipende dal modello. Per la <b>Logitech C920</b> trovi tipicamente:</p>
+  <table>
+    <tr><th>Controllo</th><th>Consiglio d'uso</th></tr>
+    <tr><td>Brightness, Contrast, Saturation, Sharpness</td><td>Regolazioni dell'immagine; il segno sotto ogni cursore indica il valore predefinito.</td></tr>
+    <tr><td>Power Line Frequency</td><td>Imposta <b>50 Hz</b> in Italia ed Europa per eliminare lo sfarfallio delle luci artificiali.</td></tr>
+    <tr><td>White Balance (automatic / temperature)</td><td>Lascia l'automatico; disattivalo e scegli la temperatura solo con luci colorate.</td></tr>
+    <tr><td>Auto Exposure / Exposure Time</td><td>"Aperture Priority" = automatico. In manuale puoi fissare il tempo di esposizione per evitare variazioni di luminosità durante lo streaming.</td></tr>
+    <tr><td>Focus, Automatic Continuous / Focus, Absolute</td><td>Disattiva l'autofocus continuo per riprendere documenti o oggetti vicini senza "pompaggio" della messa a fuoco; poi regola il fuoco assoluto.</td></tr>
+    <tr><td>Zoom, Absolute · Pan · Tilt</td><td>Zoom digitale fino a 5× e spostamento dell'inquadratura all'interno del sensore.</td></tr>
+  </table>
+  <div class="box"><b>Profili rapidi.</b> <b>Auto</b> riporta tutti i controlli ai valori predefiniti del driver. <b>50 Hz</b> applica l'anti-sfarfallio europeo con esposizione e bilanciamento automatici. <b>Fuoco fisso</b> disattiva l'autofocus continuo. Quando cambi un controllo "automatico", gli altri controlli collegati si attivano o disattivano da soli.</div>
+</section>
+
+<section>
+  <h2>7. Pagina TV e satellite (DVB)</h2>
+  <figure>
+    <img class="half" src="../img/schermata-tv.png" alt="Pagina TV">
+    <figcaption>La pagina TV: elenco canali, caricamento e scansione del file canali, sintonia manuale.</figcaption>
+  </figure>
+  <h3>Procedura consigliata</h3>
+  <ol class="steps">
+    <li>Collega la scheda TV e, se satellitare, il cavo dalla parabola. Nella pagina <i>Sorgente</i> scegli la voce <b>TV: …</b> con il nome della scheda e i sistemi supportati (DVB-T, DVB-T2, DVB-S2…).</li>
+    <li>Premi <b>Scansione…</b> e scegli il file di scansione iniziale della tua zona (per il digitale terrestre italiano: <code>/usr/share/dvbv5/dvb-t/it-…</code> oppure <code>it-All</code>). Richiede il pacchetto <code>dvb-tools</code>. La scansione dura qualche minuto; il registro è visibile nell'espansore <i>Registro scansione</i>.</li>
+    <li>Al termine l'elenco <b>Canali</b> si popola: scegli un canale e la riproduzione parte. Il canale viene ricordato per la volta successiva.</li>
+  </ol>
+  <p>Se hai già un file <code>channels.conf</code> (formato classico "zap" oppure DVBv5, generato da w_scan, dvbv5-scan, Kaffeine…), premi <b>Carica file…</b>.</p>
+  <h3>Sintonia manuale</h3>
+  <p>Per un singolo multiplex di cui conosci i parametri: scegli il <b>Sistema</b> (DVB-T, T2, C, S, S2…), inserisci la <b>frequenza in MHz</b> (per esempio 634 per il canale UHF 40), la <b>banda</b> (8 MHz per il terrestre europeo), per il satellite il <b>symbol rate</b> in kBd e la <b>polarità</b>, poi premi <b>Sintonizza</b>. Viene riprodotto il primo programma del multiplex.</p>
+  <div class="box"><b>Audio TV.</b> Con una sorgente TV l'ingresso audio <i>Automatico</i> usa l'audio del canale. Per sentirlo attiva il <i>ponte audio</i> nella pagina Uscite (vedi capitolo 9): così scegli tu su quale uscita (altoparlanti, HDMI, cuffie) ascoltare.</div>
+</section>
+
+<section>
+  <h2>8. Pagina Rec: registrare in MP4 e OGG, istantanee</h2>
+  <figure>
+    <img class="half" src="../img/schermata-registra.png" alt="Pagina Rec">
+    <figcaption>La pagina Rec durante una registrazione: formato, qualità, destinazione e il pulsante rosso.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Impostazione</th><th>Descrizione</th></tr>
+    <tr><td>MP4 (H.264 + AAC)</td><td>Formato universale, leggibile ovunque (telefoni, TV, YouTube). Encoder x264 (o VA-API/OpenH264 se x264 manca).</td></tr>
+    <tr><td>OGG (Theora + Vorbis)</td><td>Formato completamente libero da brevetti. Theora è più lento: a 1080p su PC modesti alcuni fotogrammi possono essere saltati.</td></tr>
+    <tr><td>Video kbit/s</td><td>Qualità video. Valori indicativi: 2500 per 720p, 4000–6000 per 1080p.</td></tr>
+    <tr><td>Audio kbit/s</td><td>128 è la qualità standard, 192–256 per musica.</td></tr>
+    <tr><td>Registra anche l'audio</td><td>Se disattivato il file contiene solo video.</td></tr>
+    <tr><td>Cartella · Prefisso</td><td>I file si chiamano <code>Prefisso-AAAAMMGG-HHMMSS.mp4</code> (o .ogg, .png per le istantanee). Cartella predefinita: Video.</td></tr>
+  </table>
+  <ol class="steps">
+    <li>Avvia la sorgente (anteprima visibile).</li>
+    <li>Premi <b>● Avvia registrazione</b>, il tasto rosso nella barra del titolo o <kbd>Ctrl</kbd>+<kbd>R</kbd>. Sull'anteprima compare <span class="rec">● REC 00:00:00</span> con il tempo trascorso.</li>
+    <li>Premi di nuovo per fermare: il file viene <b>finalizzato</b> (la barra di stato mostra "Finalizzazione del file…" per un istante) e il percorso appare sotto il pulsante. <b>Apri cartella</b> apre la destinazione nel gestore file.</li>
+  </ol>
+  <figure>
+    <img class="half" src="../img/istantanea-esempio.png" alt="Istantanea PNG">
+    <figcaption>Un'istantanea PNG scattata con <kbd>Ctrl</kbd>+<kbd>S</kbd> (qui dalla sorgente di prova): piena risoluzione della sorgente.</figcaption>
+  </figure>
+  <div class="box warn"><b>Non chiudere l'applicazione a registrazione in corso senza fermarla:</b> se lo fai, l'app ferma e finalizza il file da sola prima di uscire, ma è buona norma premere Stop. Mentre registri non è possibile cambiare sorgente o formato.</div>
+</section>
+
+<section>
+  <h2>9. Pagina Uscite: il ponte del segnale</h2>
+  <figure>
+    <img class="half" src="../img/schermata-uscite.png" alt="Pagina Uscite">
+    <figcaption>La pagina Uscite: ponte video verso un dispositivo V4L2, ponte audio verso un'uscita hardware, finestra esterna.</figcaption>
+  </figure>
+  <p>Il "ponte" prende il segnale che vedi nell'anteprima (qualunque sia la sorgente: webcam, TV, URL) e lo inoltra <b>in tempo reale</b>, senza interrompere anteprima o registrazione, verso una o più uscite.</p>
+  <h3>Ponte video → dispositivo V4L2 (webcam virtuale)</h3>
+  <ol class="steps">
+    <li>Premi <b>Crea dispositivo virtuale…</b>: viene chiesta la password di amministratore e caricato il modulo <code>v4l2loopback</code>. Compare <code>/dev/video10</code> "SmartVision Output" nell'elenco. Se il modulo manca: <code>sudo apt install v4l2loopback-dkms</code>.</li>
+    <li>Scegli il dispositivo e attiva l'interruttore <b>Attivo</b>.</li>
+    <li>In Firefox, Chrome, OBS, Zoom, Google Meet, Jitsi… scegli come webcam <b>SmartVision Output</b>: riceverai il segnale con orientamento e controlli già applicati, anche da una scheda TV.</li>
+  </ol>
+  <p>Se possiedi una scheda con un'uscita video V4L2 hardware, compare nello stesso elenco.</p>
+  <h3>Ponte audio → uscita hardware</h3>
+  <p>Scegli la destinazione (altoparlanti, HDMI/DisplayPort del televisore, cuffie) e attiva. <b>Volume</b> e <b>Muto</b> agiscono solo su questo ponte: la registrazione resta al livello originale. Con una webcam, attiva il ponte audio solo in cuffia per evitare il ritorno (eco).</p>
+  <h3>Finestra esterna (secondo schermo / TV HDMI)</h3>
+  <p>Attivando l'interruttore si apre una seconda finestra con lo stesso segnale. Trascinala sul monitor o sul televisore collegato e premi <kbd>F11</kbd> (o <kbd>F</kbd>) per lo schermo intero; <kbd>Esc</kbd> esce. Chiudendo la finestra l'interruttore si spegne da solo.</p>
+  <div class="box"><b>Le tre uscite si possono usare insieme</b> e vengono riattivate automaticamente quando cambi sorgente.</div>
+</section>
+
+<section>
+  <h2>10. Scorciatoie da tastiera</h2>
+  <table>
+    <tr><th>Tasti</th><th>Azione</th></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Avvia / ferma la registrazione</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Istantanea PNG</td></tr>
+    <tr><td><kbd>F11</kbd></td><td>Anteprima a schermo intero (anche nella finestra esterna)</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Esce dallo schermo intero</td></tr>
+    <tr><td><kbd>Invio</kbd> nel campo URL</td><td>Avvia il flusso di rete</td></tr>
+  </table>
+  <h3>Opzioni da riga di comando</h3>
+  <table>
+    <tr><td><code>webcam-tv-smart-vision --version</code></td><td>Stampa la versione.</td></tr>
+    <tr><td><code>webcam-tv-smart-vision --self-test /tmp/prova</code></td><td>Auto-test senza hardware: avvia la mira, registra un MP4 e un OGG di circa 4 secondi, scatta un'istantanea, salva le schermate di tutte le pagine ed esce. Utile per verificare che codec e plugin siano installati.</td></tr>
+  </table>
+  <p>Le impostazioni (sorgente, formato, cartella, bitrate, uscite…) sono salvate in <code>~/.config/webcam-tv-smart-vision/settings.ini</code>.</p>
+</section>
+
+<section>
+  <h2>11. Risoluzione dei problemi</h2>
+  <table>
+    <tr><th>Sintomo</th><th>Che cosa fare</th></tr>
+    <tr><td>"Nessuna periferica di cattura rilevata"</td><td>Controlla cavo e porta USB, premi <b>Cerca dispositivi</b>. Da terminale <code>ls /dev/video*</code> deve mostrare almeno un nodo e <code>lsusb</code> la webcam. Se il nodo esiste ma l'app non lo vede, verifica che il tuo utente possa accedervi (gruppo <code>video</code> o regola udev con <code>uaccess</code>).</td></tr>
+    <tr><td>"La sorgente non si avvia (dispositivo occupato…)"</td><td>Un'altra applicazione (browser, videoconferenza, OBS) sta usando la webcam. Chiudila o usa il ponte video per condividere il segnale.</td></tr>
+    <tr><td>Anteprima a scatti o lenta</td><td>Scegli un formato <b>MJPG</b> invece di YUYV (molto più leggero sul bus USB), collega la webcam direttamente al PC e non a un hub, riduci la risoluzione.</td></tr>
+    <tr><td>Immagine che sfarfalla</td><td>Pagina Webcam → <b>50 Hz</b> (Power Line Frequency).</td></tr>
+    <tr><td>Nessun audio nella registrazione</td><td>Pagina Sorgente → <i>Ingresso</i>: scegli esplicitamente il microfono. La barra di stato avvisa se la registrazione parte senza audio. Verifica l'indicatore del livello in basso a destra.</td></tr>
+    <tr><td>Registrazione OGG con fotogrammi mancanti</td><td>Theora è lento: scegli 720p o passa a MP4.</td></tr>
+    <tr><td>"Nessun encoder H.264 disponibile"</td><td><code>sudo apt install gstreamer1.0-plugins-ugly gstreamer1.0-libav</code></td></tr>
+    <tr><td>Scheda TV non elencata</td><td>Verifica <code>ls /dev/dvb</code>; molte schede richiedono il firmware (<code>sudo apt install firmware-linux-nonfree</code> su Debian, abilitando la sezione non-free). Controlla <code>dmesg | grep -i dvb</code>.</td></tr>
+    <tr><td>"dvbv5-scan non trovato"</td><td><code>sudo apt install dvb-tools</code></td></tr>
+    <tr><td>Nessun dispositivo di uscita video</td><td>Pagina Uscite → <b>Crea dispositivo virtuale…</b>; se il modulo manca: <code>sudo apt install v4l2loopback-dkms</code>.</td></tr>
+    <tr><td>Anteprima vuota ("Plugin gtksink mancante")</td><td><code>sudo apt install gstreamer1.0-gtk3</code></td></tr>
+  </table>
+  <p>Per un rapporto dettagliato lancia l'app da terminale con <code>GST_DEBUG=2 webcam-tv-smart-vision</code> e allega l'output a una segnalazione su GitHub.</p>
+</section>
+
+<section>
+  <h2>12. Compilare dai sorgenti e creare il pacchetto</h2>
+  <pre><code>sudo apt install build-essential cmake ninja-build pkg-config libgtk-3-dev \
+  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+  gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
+  gstreamer1.0-libav gstreamer1.0-gtk3
+git clone https://github.com/fabionet/webcam-tv-smart.git
+cd webcam-tv-smart
+./build.sh            # compila in build/
+./build.sh install    # installa in /usr/local con voce di menu e icona
+./build.sh deb        # crea il pacchetto .deb per la distribuzione in uso, in dist/</code></pre>
+  <p>Per creare il pacchetto di un'altra distribuzione serve Docker o Podman: <code>packaging/build-deb-in-container.sh debian:12</code>. I pacchetti ufficiali vengono compilati da <b>GitHub Actions</b> nei container di Debian 12, Debian 13, Ubuntu 22.04 e Ubuntu 24.04 a ogni versione (tag <code>vX.Y.Z</code>) e pubblicati nella pagina Releases.</p>
+  <h3>Com'è fatta</h3>
+  <table>
+    <tr><td><code>src/pipeline.*</code></td><td>Pipeline GStreamer: sorgente → tee → anteprima, registrazione (rami dinamici con finalizzazione EOS), uscite ponte.</td></tr>
+    <tr><td><code>src/device_manager.*</code></td><td>Enumerazione di webcam (V4L2), schede DVB, dispositivi audio e hot-plug.</td></tr>
+    <tr><td><code>src/v4l2_device.*</code></td><td>Formati e controlli della webcam tramite ioctl V4L2.</td></tr>
+    <tr><td><code>src/dvb.*</code></td><td>Adattatori DVB e lettura di channels.conf.</td></tr>
+    <tr><td><code>src/app_window.*</code></td><td>Interfaccia GTK3, pagine, azioni e auto-test.</td></tr>
+  </table>
+  <p style="margin-top:18px;color:#5e5c64">WebCam and TV Smart Vision è software libero distribuito con licenza GNU GPL 3.0 o successiva. © 2026 Fabio Avallone.</p>
+</section>
+
+</body>
+</html>
