@@ -1,0 +1,6 @@
+# Logitech C920 / C920 HD Pro / C922 / Brio: nodo video con etichetta stabile e valori predefiniti.
+# Installazione: sudo cp 99-logitech-c920-smartvision.rules /etc/udev/rules.d/ && sudo udevadm control --reload
+# Il driver è quello del kernel (uvcvideo per il video, snd-usb-audio per il microfono):
+# questa regola non sostituisce alcun driver, aggiunge solo un link /dev/webcam-c920 e i valori iniziali.
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d|08e5|085c|086b", ATTR{index}=="0", SYMLINK+="webcam-c920", TAG+="uaccess"
+ACTION=="add", SUBSYSTEM=="video4linux", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d|08e5|085c|086b", ATTR{index}=="0", RUN+="@CMAKE_INSTALL_PREFIX@/share/webcam-tv-smart-vision/c920-defaults.sh $devnode"

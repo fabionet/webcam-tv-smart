@@ -1,0 +1,36 @@
+.TH WEBCAM-TV-SMART-VISION 1 "2026-10-07" "1.1.0" "Manuale utente"
+.SH NOME
+webcam-tv-smart-vision \- WebCam and TV Smart Vision: webcam, TV e satellite con registrazione e ponte del segnale
+.SH SINTASSI
+.B webcam-tv-smart-vision
+[\fB\-\-self\-test\fR [\fIcartella\fR]] [\fB\-\-version\fR]
+.SH DESCRIZIONE
+Applicazione GNOME (GTK3 + GStreamer) per webcam UVC (Logitech C920, Brio...), schede TV
+digitali terrestri, via cavo e satellitari (DVB) e flussi di rete. Registra audio e video in
+MP4 (H.264/AAC) e OGG (Theora/Vorbis), scatta istantanee PNG, espone i controlli V4L2 della
+webcam e inoltra il segnale verso un dispositivo video V4L2 (v4l2loopback), un'uscita audio
+o una finestra esterna a schermo intero.
+.SH OPZIONI
+.TP
+.BR \-\-self\-test " [" \fIcartella\fR ]
+Avvia la sorgente di prova, registra un MP4 e un OGG, salva un'istantanea e le schermate
+delle pagine nella cartella indicata, poi esce.
+.TP
+.B \-\-version
+Stampa la versione.
+.SH SCORCIATOIE
+Ctrl+R registra, Ctrl+S istantanea, F11 schermo intero, Esc esce dallo schermo intero.
+.SH FILE
+.TP
+.I ~/.config/webcam-tv-smart-vision/settings.ini
+Impostazioni persistenti.
+.TP
+.I ~/.config/gstreamer-1.0/dvb-channels.conf
+Elenco canali DVB predefinito (formato zap o DVBv5).
+.TP
+.I /usr/share/webcam-tv-smart-vision/99-logitech-c920-smartvision.rules
+Regola udev facoltativa per la Logitech C920 (da copiare in /etc/udev/rules.d/).
+.SH VEDERE ANCHE
+.BR v4l2-ctl (1),
+.BR dvbv5-scan (1),
+.BR gst-launch-1.0 (1)

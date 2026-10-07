@@ -1,0 +1,74 @@
+name: Pacchetti Debian/Ubuntu
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  deb:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ['debian:12', 'debian:13', 'ubuntu:22.04', 'ubuntu:24.04']
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - name: Dipendenze di compilazione
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build pkg-config file lintian \
+            libgtk-3-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
+            gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-gtk3 \
+            xvfb xauth adwaita-icon-theme ca-certificates git
+      - uses: actions/checkout@v4
+      - name: Compila
+        run: |
+          cmake -S . -B build-deb -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build-deb
+      - name: Auto-test (Xvfb, sorgente di prova, MP4/OGG)
+        continue-on-error: true
+        run: |
+          mkdir -p selftest
+          xvfb-run -a -s "-screen 0 1280x800x24" ./build-deb/webcam-tv-smart-vision --self-test "$PWD/selftest" 2>&1 | grep self-test
+          ls -la selftest
+      - name: Pacchetto .deb
+        run: |
+          cd build-deb && cpack -G DEB && cd ..
+          lintian --tag-display-limit 0 build-deb/*.deb || true
+          dpkg-deb -I build-deb/*.deb
+      - name: Verifica installazione
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get install -y ./build-deb/*.deb
+          webcam-tv-smart-vision --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-${{ matrix.image }}
+          path: build-deb/*.deb
+          if-no-files-found: error
+
+  release:
+    name: Release GitHub
+    needs: deb
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: debs
+          merge-multiple: true
+      - name: Pubblica i pacchetti nella release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: debs/*.deb
+          generate_release_notes: true
