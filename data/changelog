@@ -1,3 +1,10 @@
+webcam-tv-smart-vision (1.1.1) unstable; urgency=medium
+
+  * La sorgente di prova funziona anche senza il plugin pango (timeoverlay).
+  * Dipendenza esplicita da gstreamer1.0-x.
+
+ -- Fabio Avallone <avallone.fabio@gmail.com>  Wed, 07 Oct 2026 23:20:00 +0200
+
 webcam-tv-smart-vision (1.1.0) unstable; urgency=medium
 
   * Nome della periferica di cattura mostrato nella pagina Sorgente, nella

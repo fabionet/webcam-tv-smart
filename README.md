@@ -67,7 +67,7 @@ sudo cp /usr/share/webcam-tv-smart-vision/99-logitech-c920-smartvision.rules /et
 ```bash
 sudo apt install build-essential cmake ninja-build pkg-config libgtk-3-dev \
   libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-  gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
+  gstreamer1.0-x gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
   gstreamer1.0-libav gstreamer1.0-gtk3 gstreamer1.0-pipewire \
   v4l-utils dvb-tools v4l2loopback-dkms
 ```

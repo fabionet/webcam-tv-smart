@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(WebCamTVSmartVision VERSION 1.1.0 LANGUAGES CXX)
+project(WebCamTVSmartVision VERSION 1.1.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -88,7 +88,7 @@ endif()
 set(CPACK_DEBIAN_FILE_NAME "${APP_BIN}_${PROJECT_VERSION}_${DISTRO_TAG}_amd64.deb")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)          # dipendenze dalle librerie rilevate con dpkg-shlibdeps
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-  "gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, gstreamer1.0-gtk3, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav")
+  "gstreamer1.0-plugins-base, gstreamer1.0-x, gstreamer1.0-plugins-good, gstreamer1.0-gtk3, gstreamer1.0-plugins-bad, gstreamer1.0-plugins-ugly, gstreamer1.0-libav")
 set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "gstreamer1.0-pipewire, dvb-tools, v4l-utils, pkexec")
 set(CPACK_DEBIAN_PACKAGE_SUGGESTS "v4l2loopback-dkms, gstreamer1.0-vaapi")
 include(CPack)
