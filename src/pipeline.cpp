@@ -157,9 +157,10 @@ bool MediaPipeline::buildSource(const SourceConfig& src, const AudioConfig& audi
 
     switch (src.kind) {
         case SourceKind::Test: {
-            vsrc = gst_parse_bin_from_description(
-                "videotestsrc is-live=true pattern=smpte ! video/x-raw,width=1280,height=720,framerate=30/1 ! "
-                "timeoverlay halignment=right valignment=bottom", TRUE, &err);
+            // timeoverlay (plugin pango, pacchetto gstreamer1.0-x) è facoltativo: senza, la mira resta senza orologio.
+            std::string desc = "videotestsrc is-live=true pattern=smpte ! video/x-raw,width=1280,height=720,framerate=30/1";
+            if (hasElement("timeoverlay")) desc += " ! timeoverlay halignment=right valignment=bottom";
+            vsrc = gst_parse_bin_from_description(desc.c_str(), TRUE, &err);
             break;
         }
         case SourceKind::Webcam: {
