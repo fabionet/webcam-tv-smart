@@ -438,6 +438,12 @@ bool DsCapture::start(int formatIdx, HWND notifyWnd, UINT notifyMsg, DsFrameCall
     stride_ = bottomUp ? -(w_ * 4) : w_ * 4;
     log(format(L"  [ds] collegato: %dx%d, %d byte/pixel, %ls, %.4g fps", w_, h_, bpp_, bottomUp ? L"dal basso" : L"dall'alto", fps_));
     grabber->SetCallback(cb_, 1);                              // 1 = BufferCB
+    // Cattura dal vivo: senza clock di riferimento il renderer non attende il tempo di presentazione dei
+    // campioni e i fotogrammi arrivano appena prodotti (alcune periferiche usano marche temporali proprie).
+    {
+        ComPtr<IMediaFilter> mf;
+        if (SUCCEEDED(graph_->QueryInterface(IID_IMediaFilter, mf.pv())) && mf.get()) mf->SetSyncSource(nullptr);
+    }
     if (events_.get() && notifyWnd) events_->SetNotifyWindow((OAHWND)notifyWnd, (long)notifyMsg, 0);
     running_ = true;
     hr = control_->Run();
