@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>WebCam and TV Smart Vision – Guida all'edizione Windows</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+  :root { --blu: #1c71d8; --grigio: #5e5c64; --sfondo: #f6f5f4; --rosso: #e01b24; }
+  * { box-sizing: border-box; }
+  body { font-family: "Cantarell", "Noto Sans", "DejaVu Sans", sans-serif; color: #241f31; font-size: 11pt; line-height: 1.45; margin: 0; }
+  h1 { font-size: 26pt; color: var(--blu); margin: 0 0 4px; }
+  h2 { font-size: 17pt; color: var(--blu); border-bottom: 2px solid var(--blu); padding-bottom: 3px; margin: 0 0 12px; page-break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 16px 0 6px; color: #1a5fb4; page-break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  section { page-break-before: always; }
+  section.cover { page-break-before: auto; }
+  .cover { text-align: center; padding-top: 10mm; }
+  .cover img.icon { width: 36mm; height: 36mm; }
+  .cover .sub { font-size: 13pt; color: var(--grigio); margin-bottom: 12mm; }
+  .cover img.shot { width: 125mm; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+  .cover .ver { margin-top: 10mm; color: var(--grigio); font-size: 10pt; }
+  figure { margin: 6px 0 10px; text-align: center; page-break-inside: avoid; }
+  figure img { max-width: 74%; border-radius: 6px; box-shadow: 0 3px 14px rgba(0,0,0,.22); }
+  figure img.half { max-width: 56%; }
+  figcaption { font-size: 9.5pt; color: var(--grigio); margin-top: 6px; }
+  .box { background: var(--sfondo); border-left: 4px solid var(--blu); padding: 8px 12px; margin: 10px 0; border-radius: 4px; page-break-inside: avoid; }
+  .box.warn { border-color: #e5a50a; }
+  .box.ok { border-color: #2ec27e; }
+  .box b:first-child { color: var(--blu); }
+  code, pre { font-family: "Source Code Pro", "DejaVu Sans Mono", monospace; font-size: 9.5pt; }
+  code { background: #ececec; padding: 1px 4px; border-radius: 3px; }
+  pre { background: #2d2d2d; color: #f6f5f4; padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; page-break-inside: avoid; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #d5d3d0; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: var(--sfondo); }
+  kbd { border: 1px solid #bbb; border-bottom-width: 2px; border-radius: 3px; padding: 0 5px; font-size: 9.5pt; background: #fff; }
+  .steps li { margin-bottom: 5px; }
+  .toc ol { columns: 2; column-gap: 24px; padding-left: 20px; }
+  .toc li { margin-bottom: 3px; break-inside: avoid; }
+  .rec { color: var(--rosso); font-weight: bold; }
+  footer { position: fixed; bottom: 0; font-size: 8.5pt; color: var(--grigio); }
+</style>
+
+</head>
+<body>
+
+<section class="cover">
+  <img class="icon" src="../img/icona.png" alt="Icona">
+  <h1>WebCam and TV Smart Vision</h1>
+  <div class="sub">Guida illustrata all'edizione Windows – XP a 32 bit e Windows 7, 8, 10, 11 a 64 bit</div>
+  <img class="shot" src="../img/windows/win-sorgente.png" alt="Finestra principale su Windows">
+  <div class="ver">Versione 1.2 · novembre 2026 · programma portatile, nessuna installazione · Licenza GPL-3.0</div>
+</section>
+
+<section class="toc">
+  <h2>Indice</h2>
+  <ol>
+    <li>Che cos'è, quale pacchetto scegliere, requisiti</li>
+    <li>Scaricare e avviare il programma</li>
+    <li>Prima accensione e periferica di cattura</li>
+    <li>La finestra principale</li>
+    <li>Scheda Sorgente</li>
+    <li>Scheda Webcam (Logitech C920 e altre)</li>
+    <li>Scheda TV: sintonizzatori e ingressi video</li>
+    <li>Scheda Rec: MP4, OGG e istantanee</li>
+    <li>Scheda Uscite: il ponte del segnale</li>
+    <li>Menu, tasti rapidi e riga di comando</li>
+    <li>Risoluzione dei problemi</li>
+    <li>Differenze dall'edizione Linux, verifiche, sorgenti</li>
+  </ol>
+  <div class="box"><b>Per chi è questa guida.</b> Per chi usa una webcam USB (per esempio la Logitech C920), una scheda di acquisizione o un sintonizzatore TV analogico su un PC Windows, anche datato, e vuole vedere l'anteprima, registrare audio e video e inviare lo stesso segnale a un secondo schermo. Le schermate sono state catturate su Windows 11/Server 2025; su Windows XP, 7 e 8 l'aspetto segue il tema del sistema ma comandi e posizioni sono identici.</div>
+</section>
+
+<section>
+  <h2>1. Che cos'è, quale pacchetto scegliere, requisiti</h2>
+  <p><b>WebCam and TV Smart Vision</b> per Windows è un unico eseguibile <b>portatile</b>: non si installa, non modifica il registro di sistema e non richiede DLL, .NET, codec o driver aggiuntivi. Usa <b>DirectShow</b> per il video e le API audio classiche di Windows, presenti da XP a Windows 11, e contiene al proprio interno i codificatori per MP4 e OGG.</p>
+  <table>
+    <tr><th>Pacchetto</th><th>Sistemi</th><th>Processore</th></tr>
+    <tr><td><code>WebCamTVSmartVision-1.2.0-<b>winxp-x86-sse2</b>.zip</code></td><td>Windows <b>XP SP3</b> a 32 bit e tutti i successivi (Vista, 7, 8, 10, 11 a 32 e 64 bit)</td><td>x86 con <b>SSE e SSE2</b>: Pentium 4, Pentium M, Athlon 64, Atom o più recenti</td></tr>
+    <tr><td><code>WebCamTVSmartVision-1.2.0-<b>win64</b>.zip</code></td><td>Windows <b>7, 8, 8.1, 10 e 11 a 64 bit</b></td><td>qualsiasi processore a 64 bit</td></tr>
+  </table>
+  <p>In caso di dubbio su un PC moderno scegli <b>win64</b>; su un PC con Windows XP o con Windows a 32 bit usa <b>winxp-x86-sse2</b>. Se il processore non ha SSE2 (Pentium III, Athlon XP) il programma lo segnala all'avvio e si chiude.</p>
+  <h3>Che cosa serve</h3>
+  <table>
+    <tr><th>Webcam</th><td>Qualsiasi webcam riconosciuta da Windows: Logitech C920, C920 HD Pro, C922, Brio, StreamCam e in generale le webcam <b>UVC</b>, che usano il driver già incluso in Windows (da XP SP2). Non serve installare il software del produttore.</td></tr>
+    <tr><th>Schede video</th><td>Schede di acquisizione e sintonizzatori TV <b>analogici</b> con driver WDM (compaiono nello stesso elenco delle webcam).</td></tr>
+    <tr><th>Audio</th><td>Microfono della webcam o qualsiasi ingresso audio di Windows; un'uscita audio per il ponte (facoltativa).</td></tr>
+    <tr><th>Spazio</th><td>Circa 2 MB per il programma; per le registrazioni circa 30 MB al minuto a 4000 kbit/s.</td></tr>
+  </table>
+  <div class="box ok"><b>Driver: non serve installarne.</b> La Logitech C920 è una webcam Full HD 1080p di tipo UVC: Windows la riconosce da sola al collegamento. Il modello Logitech 4K si chiama <b>Brio</b> e funziona allo stesso modo.</div>
+</section>
+
+<section>
+  <h2>2. Scaricare e avviare il programma</h2>
+  <ol class="steps">
+    <li>Apri <code>https://github.com/fabionet/webcam-tv-smart/releases</code> e scarica lo <b>zip</b> adatto al tuo sistema (capitolo 1).</li>
+    <li>Estrai lo zip dove preferisci (Desktop, Documenti, una chiavetta USB): clic destro → <i>Estrai tutto…</i>.</li>
+    <li>Apri la cartella estratta e fai doppio clic su <b>WebCamTVSmartVision.exe</b>.</li>
+  </ol>
+  <table>
+    <tr><th>File nella cartella</th><th>Contenuto</th></tr>
+    <tr><td><code>WebCamTVSmartVision.exe</code></td><td>Il programma.</td></tr>
+    <tr><td><code>Guida-Windows-WebCam-TV-Smart-Vision.pdf</code></td><td>Questa guida (si apre anche con <kbd>F1</kbd>).</td></tr>
+    <tr><td><code>LEGGIMI.txt</code>, <code>LICENZA.txt</code>, <code>LICENZE-TERZE-PARTI.txt</code></td><td>Note rapide e licenze.</td></tr>
+  </table>
+  <div class="box warn"><b>Avviso "PC protetto da Windows" (Windows 8, 10, 11).</b> Il programma non ha una firma digitale commerciale, quindi SmartScreen può mostrare un avviso al primo avvio: scegli <b>Ulteriori informazioni</b> e poi <b>Esegui comunque</b>. Se Windows segnala che il file "proviene da un altro computer", apri le <i>Proprietà</i> dello zip e spunta <b>Annulla blocco</b> prima di estrarlo.</div>
+  <div class="box"><b>Autorizzazioni di fotocamera e microfono (Windows 10 e 11).</b> In <i>Impostazioni → Privacy e sicurezza → Fotocamera</i> devono essere attivi <b>Accesso alla fotocamera</b> e <b>Consenti alle app desktop di accedere alla fotocamera</b>; lo stesso vale per <i>Microfono</i>. Senza questi permessi la webcam compare nell'elenco ma non si avvia.</div>
+  <p>Le impostazioni vengono salvate in <code>%APPDATA%\WebCamTVSmartVision\settings.ini</code>. Per "disinstallare" basta cancellare la cartella del programma e, se vuoi, quel file.</p>
+</section>
+
+<section>
+  <h2>3. Prima accensione e periferica di cattura</h2>
+  <p>All'avvio il programma cerca le periferiche di cattura. Il <b>nome della periferica</b> compare in grassetto in cima alla scheda <i>Sorgente</i>, accanto al tasto <b>Aggiorna</b>, nella barra sopra l'anteprima e nell'angolo in basso dell'immagine insieme a risoluzione e fotogrammi al secondo.</p>
+  <figure>
+    <img src="../img/windows/win-nessuna-periferica.png" alt="Nessuna sorgente attiva">
+    <figcaption>Nessuna sorgente attiva: l'area video mostra la periferica rilevata (qui una webcam virtuale) oppure l'avviso <i>Nessuna periferica di cattura rilevata</i>, con i tasti <b>Cerca dispositivi</b> e <b>Avvia sorgente</b>.</figcaption>
+  </figure>
+  <div class="box"><b>La webcam non viene rilevata?</b> Collegala e premi <b>Cerca dispositivi</b>, <b>Aggiorna</b> oppure <kbd>F5</kbd>. Di norma non serve: il programma si accorge da solo del collegamento e, se nessuna sorgente è attiva, seleziona e avvia la webcam appena collegata. Se scolleghi la webcam mentre è in uso, l'anteprima si ferma e torna questo avviso.</div>
+  <p>Se la periferica usata l'ultima volta non è collegata, il programma non passa in silenzio alla sorgente di prova: mostra <i>Periferica non rilevata</i> con il nome ricordato.</p>
+</section>
+
+<section>
+  <h2>4. La finestra principale</h2>
+  <figure>
+    <img src="../img/windows/win-sorgente.png" alt="Finestra principale durante una registrazione">
+    <figcaption>La finestra (800×600, ridimensionabile) durante una registrazione: a sinistra l'anteprima con il riquadro <span class="rec">● REC</span> e il tempo trascorso, a destra le cinque schede.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Elemento</th><th>Funzione</th></tr>
+    <tr><td>Menu <b>File · Sorgente · Visualizza · ?</b></td><td>Tutti i comandi, con i tasti rapidi indicati a fianco.</td></tr>
+    <tr><td><b>Avvia / Ferma</b></td><td>Avvia o ferma la sorgente selezionata (<kbd>F6</kbd>).</td></tr>
+    <tr><td><b>Istantanea</b></td><td>Salva un'immagine PNG nella cartella di destinazione (<kbd>Ctrl</kbd>+<kbd>S</kbd>).</td></tr>
+    <tr><td><b>Registra / Ferma reg.</b></td><td>Avvia o ferma la registrazione (<kbd>Ctrl</kbd>+<kbd>R</kbd>).</td></tr>
+    <tr><td>Testo a destra dei pulsanti</td><td>Nome della sorgente, risoluzione e fotogrammi al secondo misurati.</td></tr>
+    <tr><td>Schede <b>Sorgente · Webcam · TV · Rec · Uscite</b></td><td>Descritte nei capitoli seguenti. Se il contenuto è più alto della finestra compare una barra di scorrimento.</td></tr>
+    <tr><td>Barra di stato</td><td>Ultimo messaggio (file salvato, periferiche trovate, errori) e indicatore del livello <b>Audio</b>.</td></tr>
+  </table>
+  <p>Un <b>doppio clic sull'anteprima</b> o <kbd>F11</kbd> porta il video a schermo intero; <kbd>Esc</kbd> o un altro doppio clic torna alla finestra.</p>
+</section>
+
+<section>
+  <h2>5. Scheda Sorgente</h2>
+  <figure>
+    <img class="half" src="../img/windows/win-specchiata.png" alt="Scheda Sorgente con immagine specchiata">
+    <figcaption>La scheda Sorgente; qui l'orientamento è impostato su <i>Specchiata</i>, e infatti le barre della sorgente di prova sono invertite.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Comando</th><th>Descrizione</th></tr>
+    <tr><td>Nome periferica + <b>Aggiorna</b></td><td>Periferiche di cattura rilevate (o avviso) e nuova ricerca.</td></tr>
+    <tr><td>Sorgente video</td><td>La <i>Sorgente di prova</i> (barre colorate con orologio e tono a 440 Hz, utile per provare registrazione e uscite senza hardware) e tutte le periferiche video di Windows.</td></tr>
+    <tr><td>Formato</td><td>Codifica, risoluzione e fotogrammi al secondo offerti dalla periferica, per esempio <code>MJPG 1920x1080 @ 30 fps</code>. <i>Automatico</i> preferisce MJPG 1280×720 a 30 fps, leggero per la porta USB e per i PC meno recenti. La scelta è ricordata per ogni periferica.</td></tr>
+    <tr><td>Ingresso audio</td><td><i>Automatico</i> usa il microfono che porta il nome della webcam (per esempio "Microfono (HD Pro Webcam C920)") o, se non c'è, l'ingresso predefinito di Windows; <i>Nessun audio</i>; oppure un ingresso specifico.</td></tr>
+    <tr><td>Guadagno</td><td>Amplificazione dell'audio da 0 a 2 volte (al centro = invariato); vale anche per la registrazione.</td></tr>
+    <tr><td>Orientamento</td><td>Normale, specchiata, capovolta, ruotata di 180° o di 90°. Non modificabile durante la registrazione.</td></tr>
+    <tr><td>Avvia / Ferma</td><td>Controllo manuale della sorgente.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>6. Scheda Webcam (Logitech C920 e altre)</h2>
+  <figure>
+    <img class="half" src="../img/windows/win-webcam.png" alt="Scheda Webcam">
+    <figcaption>La scheda Webcam. Con una webcam selezionata, sotto <i>Controlli del dispositivo</i> compare una riga per ogni regolazione offerta dal driver: cursore, valore e casella <i>Auto</i>.</figcaption>
+  </figure>
+  <p>I controlli vengono letti dal driver della periferica, quindi l'elenco dipende dal modello. Con la <b>Logitech C920</b> trovi di norma:</p>
+  <table>
+    <tr><th>Controllo</th><th>Consiglio d'uso</th></tr>
+    <tr><td>Luminosità, Contrasto, Saturazione, Nitidezza, Guadagno</td><td>Regolazioni dell'immagine.</td></tr>
+    <tr><td>Bilanc. bianco</td><td>Lascia <i>Auto</i>; toglilo e scegli la temperatura solo con luci colorate.</td></tr>
+    <tr><td>Controluce</td><td>Compensazione quando hai una finestra alle spalle.</td></tr>
+    <tr><td>Rete 50/60 Hz</td><td>Anti-sfarfallio: <b>1 = 50 Hz</b> (Italia ed Europa), 2 = 60 Hz.</td></tr>
+    <tr><td>Esposizione</td><td>Con <i>Auto</i> la webcam si adatta alla luce; in manuale la luminosità resta costante.</td></tr>
+    <tr><td>Messa a fuoco</td><td>Togli <i>Auto</i> per riprendere documenti o oggetti vicini senza continui aggiustamenti.</td></tr>
+    <tr><td>Zoom, Pan, Tilt</td><td>Zoom digitale e spostamento dell'inquadratura.</td></tr>
+  </table>
+  <div class="box"><b>Profili rapidi.</b> <b>Auto</b> riporta tutto ai valori predefiniti con gli automatismi attivi. <b>50 Hz</b> attiva l'anti-sfarfallio europeo con esposizione e bilanciamento automatici. <b>Fuoco fisso</b> disattiva l'autofocus mantenendo la messa a fuoco attuale.<br><b>Proprietà del driver…</b> apre la finestra di regolazione fornita dal driver stesso, dove alcuni modelli offrono opzioni in più (per esempio <i>Compensazione luce scarsa</i>).</div>
+</section>
+
+<section>
+  <h2>7. Scheda TV: sintonizzatori e ingressi video</h2>
+  <figure>
+    <img class="half" src="../img/windows/win-tv.png" alt="Scheda TV">
+    <figcaption>La scheda TV. I comandi si attivano quando la periferica selezionata ha un sintonizzatore analogico o più ingressi video.</figcaption>
+  </figure>
+  <p>Questa scheda serve per le <b>schede di acquisizione</b> e i <b>sintonizzatori TV analogici</b> (PAL/SECAM/NTSC) con driver WDM, molto diffusi sui PC dell'epoca di Windows XP e 7, e per digitalizzare videoregistratori, videocamere e decoder collegati in composito o S-Video.</p>
+  <table>
+    <tr><th>Comando</th><th>Descrizione</th></tr>
+    <tr><td>Ingresso video</td><td>Ingresso fisico della scheda: <i>Sintonizzatore TV</i>, <i>Video composito</i>, <i>S-Video</i>… Per un videoregistratore scegli composito o S-Video.</td></tr>
+    <tr><td>Segnale RF</td><td><i>Antenna</i> oppure <i>Cavo</i>: cambia la tabella delle frequenze dei canali.</td></tr>
+    <tr><td>Paese (prefisso)</td><td>Prefisso telefonico internazionale che determina la canalizzazione: <b>39</b> per l'Italia. Premi <b>Imposta</b>.</td></tr>
+    <tr><td>Canale, <b>Vai</b>, <b>−</b>, <b>+</b></td><td>Sintonia diretta o canale precedente/successivo.</td></tr>
+    <tr><td>Segnale</td><td>Indica se il sintonizzatore aggancia una portante video.</td></tr>
+    <tr><td><b>Ricerca canali</b></td><td>Scorre tutti i canali e mette nell'elenco a destra quelli con segnale; scegline uno per sintonizzarlo. Il tasto diventa <b>Interrompi</b> durante la ricerca.</td></tr>
+  </table>
+  <p>L'audio delle schede analogiche arriva di solito dall'ingresso <i>Linea</i> della scheda audio o da un ingresso dedicato: selezionalo in <i>Sorgente → Ingresso audio</i>.</p>
+  <div class="box warn"><b>Televisione digitale.</b> In Italia le trasmissioni analogiche terrestri sono cessate: il sintonizzatore analogico resta utile per decoder, videoregistratori e modulatori. Le schede <b>digitali</b> (DVB-T/T2, DVB-S/S2, DVB-C) vengono rilevate e indicate in questa scheda, ma l'edizione Windows non ne esegue la sintonia: per il digitale terrestre e satellitare usa l'edizione Linux del programma.</div>
+</section>
+
+<section>
+  <h2>8. Scheda Rec: MP4, OGG e istantanee</h2>
+  <figure>
+    <img class="half" src="../img/windows/win-rec.png" alt="Scheda Rec">
+    <figcaption>La scheda Rec durante una registrazione: le impostazioni sono bloccate finché non la fermi.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Impostazione</th><th>Descrizione</th></tr>
+    <tr><td>MP4 (H.264 + AAC)</td><td>Si riproduce ovunque: Windows Media Player (da Windows 7), VLC, telefoni, televisori, YouTube. Video H.264 profilo Baseline, audio AAC-LC.</td></tr>
+    <tr><td>OGG (Theora + Vorbis)</td><td>Formato libero da brevetti; si apre con VLC, Firefox, Chrome. La codifica è più pesante: in Full HD su PC lenti alcuni fotogrammi vengono saltati.</td></tr>
+    <tr><td>Video kbit/s</td><td>Qualità video: 1500 per 640×480, 2500–4000 per 720p, 6000–8000 per 1080p.</td></tr>
+    <tr><td>Audio kbit/s</td><td>128 è lo standard; 192 per la musica.</td></tr>
+    <tr><td>Registra anche l'audio</td><td>Se tolto, il file contiene solo il video.</td></tr>
+    <tr><td>Cartella, <b>Sfoglia…</b>, Prefisso</td><td>I file si chiamano <code>Prefisso-AAAAMMGG-HHMMSS.mp4</code> (o <code>.ogg</code>, <code>.png</code>). Cartella predefinita: <i>Video</i> dell'utente.</td></tr>
+  </table>
+  <ol class="steps">
+    <li>Avvia la sorgente e controlla l'anteprima e il livello <b>Audio</b> nella barra di stato.</li>
+    <li>Premi <b>Avvia registrazione</b>, <b>Registra</b> oppure <kbd>Ctrl</kbd>+<kbd>R</kbd>: sull'anteprima compare <span class="rec">● REC 00:00:00</span>.</li>
+    <li>Premi di nuovo per fermare. Il file viene completato e il suo percorso compare nella barra di stato e sotto il pulsante; <b>Apri cartella</b> lo mostra in Esplora risorse.</li>
+  </ol>
+  <figure>
+    <img class="half" src="../img/windows/istantanea-esempio.png" alt="Istantanea PNG">
+    <figcaption>Un'istantanea PNG (<kbd>Ctrl</kbd>+<kbd>S</kbd>) alla piena risoluzione della sorgente.</figcaption>
+  </figure>
+  <div class="box"><b>Da sapere.</b> I codificatori lavorano a blocchi di 16 pixel: le dimensioni non multiple di 16 vengono ritagliate al centro di pochi pixel nel file (1920×1080 diventa 1920×1072); l'anteprima e le istantanee restano intere. Se il PC non riesce a codificare in tempo reale, alla fine la barra di stato indica quanti fotogrammi sono stati saltati: riduci risoluzione o bitrate, oppure usa MP4. Chiudendo il programma durante una registrazione il file viene comunque completato.</div>
+</section>
+
+<section>
+  <h2>9. Scheda Uscite: il ponte del segnale</h2>
+  <figure>
+    <img class="half" src="../img/windows/win-uscite.png" alt="Scheda Uscite">
+    <figcaption>La scheda Uscite: finestra esterna per un secondo schermo e ponte audio verso un'uscita a scelta.</figcaption>
+  </figure>
+  <p>Il "ponte" inoltra <b>in tempo reale</b> lo stesso segnale dell'anteprima, senza interrompere la registrazione.</p>
+  <h3>Ponte video: finestra esterna</h3>
+  <ol class="steps">
+    <li>Collega il secondo monitor, il proiettore o il televisore (HDMI, DisplayPort, VGA) e in Windows scegli <i>Estendi</i> (<kbd>Win</kbd>+<kbd>P</kbd>).</li>
+    <li>Spunta <b>Apri la finestra esterna</b>.</li>
+    <li>In <b>Posizione</b> scegli <i>Schermo 2 intero</i> per riempire subito il secondo schermo, oppure lascia <i>Finestra mobile</i> e trascinala dove vuoi; <kbd>F11</kbd> o un doppio clic la portano a schermo intero, <kbd>Esc</kbd> la riporta in finestra.</li>
+  </ol>
+  <figure>
+    <img class="half" src="../img/windows/win-esterna.png" alt="Finestra esterna">
+    <figcaption>La finestra esterna mostra solo il video, senza comandi né scritte sovrapposte.</figcaption>
+  </figure>
+  <h3>Ponte audio: uscita hardware</h3>
+  <p>Scegli il <b>Dispositivo</b> (altoparlanti, HDMI del televisore, cuffie) e spunta <b>Invia l'audio a questa uscita</b>. <b>Volume</b> e <b>Muto</b> agiscono solo sul ponte, non sulla registrazione. Con una webcam usa il ponte audio in cuffia, altrimenti il microfono riprende gli altoparlanti (eco).</p>
+  <div class="box warn"><b>Webcam virtuale.</b> L'edizione Windows non installa driver, quindi non crea una "webcam virtuale" per altri programmi (su Linux lo fa con v4l2loopback). Per passare il segnale a Zoom, Teams o a un browser puoi catturare la finestra esterna con un programma come OBS Studio e usare la sua videocamera virtuale.</div>
+</section>
+
+<section>
+  <h2>10. Menu, tasti rapidi e riga di comando</h2>
+  <table>
+    <tr><th>Tasti</th><th>Azione</th><th>Menu</th></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Avvia / ferma la registrazione</td><td>File</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Istantanea PNG</td><td>File</td></tr>
+    <tr><td><kbd>F5</kbd></td><td>Cerca dispositivi</td><td>Sorgente</td></tr>
+    <tr><td><kbd>F6</kbd></td><td>Avvia / ferma la sorgente</td><td>Sorgente</td></tr>
+    <tr><td><kbd>F11</kbd> · doppio clic sul video</td><td>Schermo intero</td><td>Visualizza</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Esce dallo schermo intero</td><td></td></tr>
+    <tr><td><kbd>F1</kbd></td><td>Apre questa guida</td><td>?</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>F4</kbd></td><td>Chiude il programma (completando un'eventuale registrazione)</td><td>File</td></tr>
+  </table>
+  <h3>Diagnostica dispositivi</h3>
+  <p>Il menu <b>? → Diagnostica dispositivi…</b> apre nel Blocco note l'elenco completo di periferiche video, formati, controlli, schede TV digitali e dispositivi audio visti dal programma: è il testo da allegare quando chiedi assistenza.</p>
+  <h3>Riga di comando</h3>
+  <table>
+    <tr><td><code>WebCamTVSmartVision.exe --self-test C:\prova</code></td><td>Auto-test senza hardware: avvia la sorgente di prova, registra un MP4 e un OGG di circa 4 secondi, scatta un'istantanea, salva le schermate di ogni scheda e scrive <code>selftest.log</code> nella cartella indicata. Codice di uscita 0 se tutto è riuscito.</td></tr>
+    <tr><td><code>… --self-test C:\prova --self-test-device</code></td><td>Come sopra, e in più prova la cattura dalla prima periferica video presente.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>11. Risoluzione dei problemi</h2>
+  <table>
+    <tr><th>Sintomo</th><th>Che cosa fare</th></tr>
+    <tr><td>"Nessuna periferica di cattura rilevata"</td><td>Controlla cavo e porta USB e premi <kbd>F5</kbd>. In <i>Gestione dispositivi</i> la webcam deve comparire sotto <i>Fotocamere</i> o <i>Dispositivi di acquisizione immagini</i> senza punto esclamativo.</td></tr>
+    <tr><td>La webcam è nell'elenco ma "non si avvia"</td><td>È in uso da un altro programma (Teams, Zoom, browser, app Fotocamera): chiudilo. Su Windows 10/11 controlla i permessi di <i>Privacy → Fotocamera</i> per le app desktop.</td></tr>
+    <tr><td>"Impossibile collegare la periferica… prova un altro formato"</td><td>Il formato scelto richiede un decodificatore assente (tipico dei formati H264). Scegli <b>MJPG</b> o <b>YUY2</b> nella scheda Sorgente.</td></tr>
+    <tr><td>Anteprima a scatti</td><td>Scegli un formato MJPG e una risoluzione più bassa; collega la webcam direttamente al PC e non a un hub; chiudi altri programmi pesanti.</td></tr>
+    <tr><td>Immagine che sfarfalla</td><td>Scheda Webcam → <b>50 Hz</b>.</td></tr>
+    <tr><td>Livello Audio fermo, registrazione muta</td><td>Scegli esplicitamente l'ingresso in <i>Sorgente → Ingresso audio</i>; su Windows 10/11 controlla <i>Privacy → Microfono</i>; verifica che l'ingresso non sia disattivato nel pannello <i>Suoni</i>.</td></tr>
+    <tr><td>Fotogrammi saltati nella registrazione</td><td>Riduci risoluzione o bitrate; preferisci MP4 a OGG; su PC dell'epoca di XP resta a 640×480.</td></tr>
+    <tr><td>Windows Media Player di XP non apre l'MP4</td><td>Windows XP non include i decodificatori H.264/AAC: usa VLC, oppure registra in OGG e riproducilo con VLC.</td></tr>
+    <tr><td>"Richiede un processore con istruzioni SSE2"</td><td>Il processore è troppo vecchio (Pentium III, Athlon XP): non è supportato.</td></tr>
+    <tr><td>Avviso SmartScreen o antivirus</td><td>Vedi capitolo 2. Il programma è software libero: i sorgenti sono pubblici e gli zip sono prodotti in automatico da GitHub Actions.</td></tr>
+    <tr><td>Scritte troppo piccole o grandi</td><td>Il programma segue il ridimensionamento dello schermo di Windows (100%, 125%, 150%).</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>12. Differenze dall'edizione Linux, verifiche, sorgenti</h2>
+  <table>
+    <tr><th>Funzione</th><th>Windows</th><th>Linux</th></tr>
+    <tr><td>Webcam, formati, controlli, istantanee</td><td>sì (DirectShow)</td><td>sì (V4L2)</td></tr>
+    <tr><td>Registrazione MP4 e OGG</td><td>sì (codificatori interni)</td><td>sì (GStreamer)</td></tr>
+    <tr><td>Sintonizzatori TV analogici e ingressi composito/S-Video</td><td>sì</td><td>tramite V4L2</td></tr>
+    <tr><td>TV digitale DVB-T/T2/S/S2/C</td><td>solo rilevamento</td><td>sì</td></tr>
+    <tr><td>Flussi di rete (RTSP, HTTP)</td><td>no</td><td>sì</td></tr>
+    <tr><td>Ponte verso secondo schermo e uscita audio</td><td>sì</td><td>sì</td></tr>
+    <tr><td>Webcam virtuale per altri programmi</td><td>no</td><td>sì (v4l2loopback)</td></tr>
+  </table>
+  <h3>Come è stata verificata</h3>
+  <p>Ogni versione viene compilata e provata in automatico: l'auto-test completo (sorgente di prova, registrazione MP4 e OGG, istantanea, finestra esterna e cattura DirectShow da una videocamera virtuale) gira su <b>Windows Server 2022</b> e <b>Windows Server 2025</b>, equivalenti a Windows 10 e 11, sia per l'eseguibile a 64 bit sia per quello a 32 bit. Per l'eseguibile a 32 bit viene inoltre controllato che usi soltanto funzioni di sistema presenti in <b>Windows XP SP3</b>. Su Windows XP, 7 e 8 reali e con una webcam fisica il programma non è stato ancora provato dall'autore: se incontri un problema, allega il testo di <i>Diagnostica dispositivi</i> a una segnalazione su GitHub.</p>
+  <h3>Sorgenti e compilazione</h3>
+  <p>Il codice è nella cartella <code>windows/</code> del repository <code>https://github.com/fabionet/webcam-tv-smart</code>. Si compila da Linux con MinGW-w64:</p>
+  <pre><code>sudo apt install mingw-w64 cmake ninja-build zip curl
+git clone https://github.com/fabionet/webcam-tv-smart.git
+cd webcam-tv-smart
+windows/build.sh        # crea i due zip in dist/</code></pre>
+  <p style="margin-top:14px;color:#5e5c64">WebCam and TV Smart Vision è software libero distribuito con licenza GNU GPL 3.0 o successiva. © 2026 Fabio Avallone. Include minih264, minimp4, stb_image_write, vo-aacenc, libogg, libvorbis e libtheora (vedi <code>LICENZE-TERZE-PARTI.txt</code>).</p>
+</section>
+
+</body>
+</html>

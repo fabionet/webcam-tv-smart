@@ -364,6 +364,12 @@ bool DsCapture::start(int formatIdx, HWND notifyWnd, UINT notifyMsg, DsFrameCall
     frameCb_ = cb;
     frameCtx_ = ctx;
     fps_ = 0;
+    // Alcuni filtri (webcam virtuali non configurate) non dichiarano alcun formato e vanno in errore
+    // se si tenta comunque il collegamento: meglio fermarsi con un messaggio chiaro.
+    if (!capPin_.get() || !pinOffersVideo(capPin_)) {
+        err = L"La periferica \"" + dev_.name + L"\" non offre alcun formato video.\nSe è una webcam virtuale, avvia prima il programma che la alimenta.";
+        return false;
+    }
     if (config_.get() && formatIdx >= 0 && formatIdx < (int)formats_.size()) {
         int count = 0, size = 0;
         config_->GetNumberOfCapabilities(&count, &size);

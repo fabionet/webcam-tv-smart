@@ -51,6 +51,8 @@ jobs:
             Start-Process regsvr32 -ArgumentList "/s", "`"$($dll.FullName)`"" -Wait
             Write-Host "registrato $($dll.FullName)"
           }
+          # Senza OBS in esecuzione il filtro espone i formati solo se trova una risoluzione salvata: mostra un'immagine fissa.
+          Set-Content -Path "$env:APPDATA\obs-virtualcam.txt" -Value "1280x720x333333" -NoNewline -Encoding ascii
       - name: Auto-test (sorgente di prova, MP4, OGG, istantanea, schermate, cattura DirectShow)
         shell: pwsh
         run: |
