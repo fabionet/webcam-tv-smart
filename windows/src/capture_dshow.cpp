@@ -109,6 +109,77 @@ void enumCategory(const GUID& category, std::vector<DsDevice>* list, const std::
     }
 }
 
+const GUID kIID_IKsPropertySet = { 0x31EFAC30, 0x515C, 0x11d0, { 0xA9, 0xAA, 0x00, 0xAA, 0x00, 0x61, 0xBE, 0x93 } };
+const GUID kAMPROPSETID_Pin = { 0x9b00f101, 0x1567, 0x11d1, { 0xb3, 0xf1, 0x00, 0xaa, 0x00, 0x37, 0x61, 0xc5 } };
+
+bool pinCategory(IPin* pin, GUID& cat) {
+    ComPtr<IKsPropertySet> ks;
+    if (FAILED(pin->QueryInterface(kIID_IKsPropertySet, ks.pv())) || !ks.get()) return false;
+    DWORD ret = 0;
+    return SUCCEEDED(ks->Get(kAMPROPSETID_Pin, 0 /*AMPROPERTY_PIN_CATEGORY*/, nullptr, 0, &cat, sizeof cat, &ret));
+}
+
+bool pinOffersVideo(IPin* pin) {
+    ComPtr<IEnumMediaTypes> en;
+    if (FAILED(pin->EnumMediaTypes(&en)) || !en.get()) return false;
+    AM_MEDIA_TYPE* mt = nullptr;
+    bool video = false;
+    while (!video && en->Next(1, &mt, nullptr) == S_OK && mt) {
+        video = mt->majortype == MEDIATYPE_Video;
+        freeMediaType(mt);
+        mt = nullptr;
+    }
+    return video;
+}
+
+// Primo pin con la direzione indicata (per sample grabber e null renderer). Il chiamante rilascia.
+IPin* firstPin(IBaseFilter* f, PIN_DIRECTION dir) {
+    ComPtr<IEnumPins> en;
+    if (FAILED(f->EnumPins(&en)) || !en.get()) return nullptr;
+    IPin* pin = nullptr;
+    while (en->Next(1, &pin, nullptr) == S_OK && pin) {
+        PIN_DIRECTION d;
+        if (SUCCEEDED(pin->QueryDirection(&d)) && d == dir) return pin;
+        pin->Release();
+        pin = nullptr;
+    }
+    return nullptr;
+}
+
+// Pin di uscita video della periferica: categoria CAPTURE, poi PREVIEW, poi qualunque uscita video.
+// Si esaminano direttamente i pin perché ICaptureGraphBuilder2 rifiuta (E_INVALIDARG) alcune periferiche,
+// per esempio le webcam virtuali.
+IPin* findCapturePin(IBaseFilter* f) {
+    IPin* byCat[2] = { nullptr, nullptr };
+    IPin* anyVideo = nullptr;
+    IPin* anyOut = nullptr;
+    ComPtr<IEnumPins> en;
+    if (FAILED(f->EnumPins(&en)) || !en.get()) return nullptr;
+    IPin* pin = nullptr;
+    while (en->Next(1, &pin, nullptr) == S_OK && pin) {
+        PIN_DIRECTION d;
+        bool keep = false;
+        if (SUCCEEDED(pin->QueryDirection(&d)) && d == PINDIR_OUTPUT) {
+            GUID cat;
+            if (pinCategory(pin, cat)) {
+                if (cat == PIN_CATEGORY_CAPTURE && !byCat[0]) { byCat[0] = pin; keep = true; }
+                else if (cat == PIN_CATEGORY_PREVIEW && !byCat[1]) { byCat[1] = pin; keep = true; }
+            }
+            if (!keep && !anyVideo && pinOffersVideo(pin)) { anyVideo = pin; keep = true; }
+            if (!keep && !anyOut) { anyOut = pin; keep = true; }
+        }
+        if (!keep) pin->Release();
+        pin = nullptr;
+    }
+    IPin* all[4] = { byCat[0], byCat[1], anyVideo, anyOut };
+    IPin* chosen = nullptr;
+    for (IPin* c : all) {
+        if (c && !chosen) chosen = c;
+        else if (c) c->Release();
+    }
+    return chosen;
+}
+
 const wchar_t* procAmpName(long p) {
     static const wchar_t* n[] = { L"Luminosità", L"Contrasto", L"Tonalità", L"Saturazione", L"Nitidezza", L"Gamma",
                                   L"Colore", L"Bilanc. bianco", L"Controluce", L"Guadagno" };
@@ -202,8 +273,13 @@ bool DsCapture::open(const DsDevice& dev, std::wstring& err) {
     graph_->QueryInterface(IID_IMediaControl, control_.pv());
     graph_->QueryInterface(IID_IMediaEventEx, events_.pv());
 
-    if (FAILED(builder_->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, cap_, IID_IAMStreamConfig, config_.pv())))
-        builder_->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, cap_, IID_IAMStreamConfig, config_.pv());
+    *(&capPin_) = findCapturePin(cap_);
+    if (!capPin_.get()) { err = L"La periferica non ha un'uscita video utilizzabile."; close(); return false; }
+    capPin_->QueryInterface(IID_IAMStreamConfig, config_.pv());
+    if (!config_.get()) {
+        if (FAILED(builder_->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, cap_, IID_IAMStreamConfig, config_.pv())))
+            builder_->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, cap_, IID_IAMStreamConfig, config_.pv());
+    }
     cap_->QueryInterface(IID_IAMVideoProcAmp, procAmp_.pv());
     cap_->QueryInterface(IID_IAMCameraControl, camCtl_.pv());
     // Cerca a monte sintonizzatore e crossbar (schede TV analogiche): il builder aggiunge i filtri necessari.
@@ -306,24 +382,39 @@ bool DsCapture::start(int formatIdx, HWND notifyWnd, UINT notifyMsg, DsFrameCall
     ComPtr<ISampleGrabber> grabber;
     grabberF_->QueryInterface(kIID_ISampleGrabber, grabber.pv());
     if (!grabber.get()) { err = L"Interfaccia ISampleGrabber non disponibile."; return false; }
-    AM_MEDIA_TYPE want;
-    memset(&want, 0, sizeof want);
-    want.majortype = MEDIATYPE_Video;
-    want.subtype = MEDIASUBTYPE_RGB32;                         // DirectShow inserisce i decodificatori necessari
-    grabber->SetMediaType(&want);
     grabber->SetBufferSamples(FALSE);
     grabber->SetOneShot(FALSE);
     graph_->AddFilter(grabberF_, L"Grabber");
     graph_->AddFilter(nullF_, L"Null");
     rendered_ = true;
-    hr = builder_->RenderStream(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, cap_, grabberF_, nullF_);
-    log(format(L"  [ds] RenderStream(CAPTURE) hr=0x%08lX", (unsigned long)hr));
-    if (FAILED(hr)) { hr = builder_->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, cap_, grabberF_, nullF_); log(format(L"  [ds] RenderStream(PREVIEW) hr=0x%08lX", (unsigned long)hr)); }
-    if (FAILED(hr)) { hr = builder_->RenderStream(nullptr, &MEDIATYPE_Video, cap_, grabberF_, nullF_); log(format(L"  [ds] RenderStream(qualsiasi) hr=0x%08lX", (unsigned long)hr)); }
+    ComPtr<IPin> grabIn, grabOut, nullIn;
+    *(&grabIn) = firstPin(grabberF_, PINDIR_INPUT);
+    *(&grabOut) = firstPin(grabberF_, PINDIR_OUTPUT);
+    *(&nullIn) = firstPin(nullF_, PINDIR_INPUT);
+    if (!grabIn.get() || !grabOut.get() || !nullIn.get()) { err = L"Pin dei filtri DirectShow non trovati."; return false; }
+    // Collegamento "intelligente": DirectShow inserisce da solo i decodificatori (MJPEG, YUV -> RGB).
+    // Si chiede RGB32 e, se nessun convertitore lo fornisce, RGB24.
+    bpp_ = 4;
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        AM_MEDIA_TYPE want;
+        memset(&want, 0, sizeof want);
+        want.majortype = MEDIATYPE_Video;
+        want.subtype = attempt == 0 ? MEDIASUBTYPE_RGB32 : MEDIASUBTYPE_RGB24;
+        grabber->SetMediaType(&want);
+        hr = graph_->Connect(capPin_, grabIn);
+        log(format(L"  [ds] Connect(periferica -> grabber %ls) hr=0x%08lX", attempt == 0 ? L"RGB32" : L"RGB24", (unsigned long)hr));
+        if (SUCCEEDED(hr)) { bpp_ = attempt == 0 ? 4 : 3; break; }
+    }
+    if (FAILED(hr)) {                                          // ultimo tentativo: lascia fare al builder
+        hr = builder_->RenderStream(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, cap_, grabberF_, nullptr);
+        log(format(L"  [ds] RenderStream(CAPTURE) hr=0x%08lX", (unsigned long)hr));
+    }
     if (FAILED(hr)) {
         err = format(L"Impossibile collegare la periferica (errore 0x%08lX).\nIl formato scelto potrebbe richiedere un decodificatore non installato: prova un altro formato (MJPG o YUY2).", (unsigned long)hr);
         return false;
     }
+    hr = graph_->Connect(grabOut, nullIn);
+    if (FAILED(hr)) { err = format(L"Impossibile completare il grafo DirectShow (errore 0x%08lX).", (unsigned long)hr); return false; }
     AM_MEDIA_TYPE mt;
     memset(&mt, 0, sizeof mt);
     bool bottomUp = true;
@@ -339,6 +430,7 @@ bool DsCapture::start(int formatIdx, HWND notifyWnd, UINT notifyMsg, DsFrameCall
     clearMediaType(mt);
     if (fps_ <= 0) fps_ = fps;
     stride_ = bottomUp ? -(w_ * 4) : w_ * 4;
+    log(format(L"  [ds] collegato: %dx%d, %d byte/pixel, %ls, %.4g fps", w_, h_, bpp_, bottomUp ? L"dal basso" : L"dall'alto", fps_));
     grabber->SetCallback(cb_, 1);                              // 1 = BufferCB
     if (events_.get() && notifyWnd) events_->SetNotifyWindow((OAHWND)notifyWnd, (long)notifyMsg, 0);
     running_ = true;
@@ -360,7 +452,7 @@ void DsCapture::stop() {
 void DsCapture::close() {
     stop();
     frameCb_ = nullptr;
-    xbar_.reset(); tuner_.reset(); camCtl_.reset(); procAmp_.reset(); config_.reset();
+    xbar_.reset(); tuner_.reset(); camCtl_.reset(); procAmp_.reset(); config_.reset(); capPin_.reset();
     events_.reset(); control_.reset();
     nullF_.reset(); grabberF_.reset(); cap_.reset();
     builder_.reset(); graph_.reset();
@@ -371,7 +463,20 @@ void DsCapture::close() {
 }
 
 void DsCapture::deliver(const uint8_t* data, long len) {
-    if (!running_ || !frameCb_ || len < (long)w_ * h_ * 4) return;
+    if (!running_ || !frameCb_) return;
+    if (bpp_ == 3) {                                           // RGB24 con righe allineate a 4 byte -> RGB32
+        size_t srcStride = ((size_t)w_ * 3 + 3) & ~(size_t)3;
+        if (len < (long)(srcStride * h_)) return;
+        conv_.resize((size_t)w_ * h_ * 4);
+        for (int y = 0; y < h_; ++y) {
+            const uint8_t* s = data + (size_t)y * srcStride;
+            uint8_t* d = &conv_[(size_t)y * w_ * 4];
+            for (int x = 0; x < w_; ++x, s += 3, d += 4) { d[0] = s[0]; d[1] = s[1]; d[2] = s[2]; d[3] = 255; }
+        }
+        frameCb_(frameCtx_, conv_.data(), w_, h_, stride_, nowSeconds());
+        return;
+    }
+    if (len < (long)w_ * h_ * 4) return;
     frameCb_(frameCtx_, data, w_, h_, stride_, nowSeconds());
 }
 

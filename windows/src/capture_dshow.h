@@ -106,6 +106,7 @@ private:
     ComPtr<IGraphBuilder> graph_;
     ComPtr<ICaptureGraphBuilder2> builder_;
     ComPtr<IBaseFilter> cap_, grabberF_, nullF_;
+    ComPtr<IPin> capPin_;                // pin di uscita video della periferica
     ComPtr<IMediaControl> control_;
     ComPtr<IMediaEventEx> events_;
     ComPtr<IAMStreamConfig> config_;
@@ -122,7 +123,8 @@ private:
     void* frameCtx_ = nullptr;
     volatile bool running_ = false;
     bool rendered_ = false;
-    int w_ = 0, h_ = 0, stride_ = 0;
+    int w_ = 0, h_ = 0, stride_ = 0, bpp_ = 4;
+    std::vector<uint8_t> conv_;          // conversione RGB24 -> RGB32 (ripiego)
     double fps_ = 0;
 };
 

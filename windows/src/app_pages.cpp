@@ -85,7 +85,7 @@ void App::rebuildWebcamControls() {
         setPageContentHeight(p, y + 70);
         return;
     }
-    SetWindowTextW(item(PAGE_WEBCAM, IDC_CAM_INFO), (devices_[d].name + L"\r\nDriver DirectShow di Windows: nessun driver aggiuntivo.").c_str());
+    SetWindowTextW(item(PAGE_WEBCAM, IDC_CAM_INFO), (devices_[d].name + L"\r\nDriver incluso in Windows (DirectShow).").c_str());
     camControls_ = cap.controls();
     ShowWindow(item(PAGE_WEBCAM, IDC_CAM_EMPTY), camControls_.empty() ? SW_SHOW : SW_HIDE);
     if (camControls_.empty()) {
