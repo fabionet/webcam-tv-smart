@@ -1,0 +1,32 @@
+#include <winver.h>
+#define STR2(x) #x
+#define STR(x) STR2(x)
+
+1 ICON "app.ico"
+1 24 "app.manifest"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION SV_VMAJ, SV_VMIN, SV_VPAT, 0
+PRODUCTVERSION SV_VMAJ, SV_VMIN, SV_VPAT, 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "041004B0"
+    BEGIN
+      VALUE "CompanyName", "Fabio Avallone"
+      VALUE "FileDescription", "WebCam and TV Smart Vision"
+      VALUE "FileVersion", STR(SV_VMAJ) "." STR(SV_VMIN) "." STR(SV_VPAT)
+      VALUE "InternalName", "WebCamTVSmartVision"
+      VALUE "LegalCopyright", "(C) 2026 Fabio Avallone - GPL-3.0-or-later"
+      VALUE "OriginalFilename", "WebCamTVSmartVision.exe"
+      VALUE "ProductName", "WebCam and TV Smart Vision"
+      VALUE "ProductVersion", STR(SV_VMAJ) "." STR(SV_VMIN) "." STR(SV_VPAT)
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0410, 1200
+  END
+END

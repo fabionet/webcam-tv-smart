@@ -1,0 +1,16 @@
+# Windows XP SP3 e successivi, 32 bit, CPU con SSE/SSE2 (Pentium 4, Pentium M, Athlon 64 o più recenti)
+set(CMAKE_SYSTEM_NAME Windows)
+set(CMAKE_SYSTEM_PROCESSOR x86)
+set(CMAKE_C_COMPILER   i686-w64-mingw32-gcc-win32)
+set(CMAKE_CXX_COMPILER i686-w64-mingw32-g++-win32)
+set(CMAKE_RC_COMPILER  i686-w64-mingw32-windres)
+set(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32)
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(SV_TARGET "winxp-x86-sse2" CACHE STRING "")
+set(SV_WINVER 0x0501 CACHE STRING "")
+# -mstackrealign: i thread creati da Windows (DirectShow, waveIn) hanno lo stack allineato a 4 byte,
+# mentre il codice SSE2 richiede 16 byte.
+set(SV_ARCH_FLAGS "-march=pentium4 -mtune=generic -msse -msse2 -mfpmath=sse -mstackrealign" CACHE STRING "")
+set(SV_LINK_FLAGS "-Wl,--major-subsystem-version,5,--minor-subsystem-version,1,--major-os-version,5,--minor-os-version,1,--large-address-aware" CACHE STRING "")

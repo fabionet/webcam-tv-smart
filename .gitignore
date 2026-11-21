@@ -7,3 +7,7 @@ dist/
 # file temporanei dell'auto-test
 selftest/
 *.log
+# edizione Windows: build e sorgenti delle librerie scaricati da windows/fetch-deps.sh
+windows/build-*/
+windows/third_party/_src/
+windows/third_party/_dl/

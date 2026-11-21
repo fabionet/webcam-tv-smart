@@ -1,0 +1,41 @@
+WebCam and TV Smart Vision - edizione Windows
+=============================================
+
+Programma portatile: non richiede installazione, DLL o codec.
+Copia la cartella dove preferisci e avvia WebCamTVSmartVision.exe.
+
+Quale pacchetto usare
+---------------------
+  ...-winxp-x86-sse2.zip   Windows XP SP3 e successivi a 32 bit (funziona anche su
+                           Vista/7/8/10/11 a 32 e 64 bit). Richiede un processore con
+                           istruzioni SSE2: Pentium 4, Pentium M, Athlon 64 o piu' recente.
+  ...-win64.zip            Windows 7, 8, 8.1, 10 e 11 a 64 bit.
+
+Cosa fa
+-------
+  - Anteprima di webcam (Logitech C920, Brio e qualsiasi webcam UVC), schede di
+    acquisizione e sintonizzatori TV analogici, tramite DirectShow.
+  - Nome della periferica rilevata e tasto "Cerca dispositivi" (F5); riconoscimento
+    automatico della webcam appena collegata.
+  - Registrazione audio+video in MP4 (H.264 + AAC) e OGG (Theora + Vorbis), istantanee PNG.
+  - Controlli della webcam (luminosita', zoom, messa a fuoco, esposizione...).
+  - Ponte del segnale: finestra esterna a schermo intero su un secondo monitor/TV e
+    inoltro dell'audio verso un'uscita a scelta.
+
+Tasti: Ctrl+R registra, Ctrl+S istantanea, F5 cerca dispositivi, F6 avvia/ferma,
+       F11 schermo intero, Esc esce dallo schermo intero, F1 guida.
+
+Limiti rispetto all'edizione Linux
+----------------------------------
+  - Le schede TV digitali (DVB-T/T2, DVB-S/S2, DVB-C) vengono rilevate ma non sintonizzate.
+  - Non c'e' la webcam virtuale (richiederebbe l'installazione di un driver).
+  - Le altezze video non multiple di 16 vengono ritagliate di pochi pixel nei file
+    registrati (per esempio 1920x1080 diventa 1920x1072).
+
+Impostazioni: %APPDATA%\WebCamTVSmartVision\settings.ini
+Diagnostica:  menu ? > Diagnostica dispositivi
+Auto-test:    WebCamTVSmartVision.exe --self-test C:\prova
+
+Guida illustrata: Guida-Windows-WebCam-TV-Smart-Vision.pdf (in questa cartella)
+Sorgenti e aggiornamenti: https://github.com/fabionet/webcam-tv-smart
+Licenza: GPL-3.0-or-later (vedi LICENZA.txt e LICENZE-TERZE-PARTI.txt)

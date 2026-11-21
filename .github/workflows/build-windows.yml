@@ -1,0 +1,92 @@
+name: Windows (XP 32 bit + 64 bit)
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Compilazione (MinGW-w64)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dipendenze di compilazione
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends mingw-w64 cmake ninja-build zip curl
+      - name: Compila XP 32 bit (SSE2) e 64 bit, verifica le importazioni per XP, crea gli zip
+        run: windows/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-zip
+          path: dist/*.zip
+          if-no-files-found: error
+
+  test:
+    name: Auto-test su ${{ matrix.os }}
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, windows-2025]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-zip
+          path: zip
+      - name: Webcam virtuale DirectShow (OBS) per provare la cattura
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          choco install obs-studio -y --no-progress | Select-Object -Last 3
+          $base = "C:\Program Files\obs-studio\data\obs-plugins\win-dshow"
+          foreach ($dll in "obs-virtualcam-module64.dll", "obs-virtualcam-module32.dll") {
+            if (Test-Path "$base\$dll") { Start-Process regsvr32 -ArgumentList "/s", "`"$base\$dll`"" -Wait; Write-Host "registrato $dll" }
+          }
+      - name: Auto-test (sorgente di prova, MP4, OGG, istantanea, schermate, cattura DirectShow)
+        shell: pwsh
+        run: |
+          $failed = 0
+          foreach ($zip in Get-ChildItem zip\*.zip) {
+            $name = $zip.BaseName
+            Expand-Archive $zip.FullName -DestinationPath app -Force
+            $out = Join-Path $PWD "risultati\$name"
+            New-Item -ItemType Directory -Force $out | Out-Null
+            $p = Start-Process -FilePath "app\$name\WebCamTVSmartVision.exe" -ArgumentList "--self-test", "`"$out`"", "--self-test-device" -PassThru
+            if (-not $p.WaitForExit(180000)) { $p.Kill(); Write-Host "::error::$name: tempo scaduto"; $failed = 1 }
+            Write-Host "===== $name : codice di uscita $($p.ExitCode) ====="
+            if (Test-Path "$out\selftest.log") { Get-Content "$out\selftest.log" -Encoding UTF8 } else { Write-Host "::error::$name: nessun registro" ; $failed = 1 }
+            if ($p.ExitCode -ne 0) { $failed = 1 }
+          }
+          exit $failed
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: autotest-${{ matrix.os }}
+          path: risultati
+          if-no-files-found: warn
+
+  release:
+    name: Release GitHub
+    needs: [build, test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-zip
+          path: zip
+      - name: Allega gli zip alla release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1 || gh release create "$TAG" --repo "$REPO" --generate-notes || true
+          for i in 1 2 3; do gh release upload "$TAG" zip/*.zip --repo "$REPO" --clobber && break || sleep 20; done

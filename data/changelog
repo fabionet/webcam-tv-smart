@@ -1,3 +1,13 @@
+webcam-tv-smart-vision (1.2.0) unstable; urgency=medium
+
+  * Nuova edizione per Windows (cartella windows/): Windows XP SP3 a 32 bit
+    con SSE2 e Windows 7/8/10/11 a 64 bit, basata su DirectShow, con
+    registrazione MP4 e OGG, controlli della webcam, sintonizzatori TV
+    analogici e ponte del segnale. Guida illustrata dedicata.
+  * Nessuna modifica funzionale all'edizione Linux.
+
+ -- Fabio Avallone <avallone.fabio@gmail.com>  Sat, 21 Nov 2026 10:30:00 +0100
+
 webcam-tv-smart-vision (1.1.1) unstable; urgency=medium
 
   * La sorgente di prova funziona anche senza il plugin pango (timeoverlay).
