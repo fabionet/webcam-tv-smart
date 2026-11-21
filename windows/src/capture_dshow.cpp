@@ -19,6 +19,12 @@ const GUID kIID_ISampleGrabber = { 0x6B652FFF, 0x11FE, 0x4fce, { 0x92, 0xAD, 0x0
 const GUID kIID_ISampleGrabberCB = { 0x0579154A, 0x2B53, 0x4994, { 0xB0, 0xD0, 0xE7, 0x73, 0x14, 0x8E, 0xFF, 0x85 } };
 const GUID kBdaNetworkTuner = { 0x71985F48, 0x1CA1, 0x11d3, { 0x9C, 0xC8, 0x00, 0xC0, 0x4F, 0x79, 0x71, 0xE0 } };
 
+std::wstring guidStr(const GUID& g) {
+    wchar_t b[64] = L"";
+    StringFromGUID2(g, b, 64);
+    return b;
+}
+
 void freeMediaType(AM_MEDIA_TYPE* mt) {
     if (!mt) return;
     if (mt->cbFormat) CoTaskMemFree(mt->pbFormat);
@@ -227,13 +233,18 @@ bool DsCapture::open(const DsDevice& dev, std::wstring& err) {
 
 void DsCapture::readFormats() {
     formats_.clear();
-    if (!config_.get()) return;
+    if (!config_.get()) { log(L"  [ds] IAMStreamConfig non disponibile su questa periferica"); return; }
     int count = 0, size = 0;
-    if (FAILED(config_->GetNumberOfCapabilities(&count, &size)) || size <= 0) return;
+    HRESULT hrc = config_->GetNumberOfCapabilities(&count, &size);
+    log(format(L"  [ds] GetNumberOfCapabilities hr=0x%08lX formati=%d dimensione=%d", (unsigned long)hrc, count, size));
+    if (FAILED(hrc) || size <= 0) return;
     std::vector<BYTE> scc((size_t)size);
     for (int i = 0; i < count; ++i) {
         AM_MEDIA_TYPE* mt = nullptr;
-        if (config_->GetStreamCaps(i, &mt, scc.data()) != S_OK || !mt) continue;
+        HRESULT hrs = config_->GetStreamCaps(i, &mt, scc.data());
+        if (hrs != S_OK || !mt) { log(format(L"  [ds] GetStreamCaps(%d) hr=0x%08lX", i, (unsigned long)hrs)); continue; }
+        log(format(L"  [ds] formato %d: tipo=%ls sottotipo=%ls formato=%ls cb=%lu", i, guidStr(mt->majortype).c_str(),
+                   guidStr(mt->subtype).c_str(), guidStr(mt->formattype).c_str(), (unsigned long)mt->cbFormat));
         DsFormat f;
         f.capIndex = i;
         if (mt->majortype == MEDIATYPE_Video && videoInfo(mt, f.width, f.height, f.fps)) {
@@ -306,8 +317,9 @@ bool DsCapture::start(int formatIdx, HWND notifyWnd, UINT notifyMsg, DsFrameCall
     graph_->AddFilter(nullF_, L"Null");
     rendered_ = true;
     hr = builder_->RenderStream(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, cap_, grabberF_, nullF_);
-    if (FAILED(hr)) hr = builder_->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, cap_, grabberF_, nullF_);
-    if (FAILED(hr)) hr = builder_->RenderStream(nullptr, &MEDIATYPE_Video, cap_, grabberF_, nullF_);
+    log(format(L"  [ds] RenderStream(CAPTURE) hr=0x%08lX", (unsigned long)hr));
+    if (FAILED(hr)) { hr = builder_->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, cap_, grabberF_, nullF_); log(format(L"  [ds] RenderStream(PREVIEW) hr=0x%08lX", (unsigned long)hr)); }
+    if (FAILED(hr)) { hr = builder_->RenderStream(nullptr, &MEDIATYPE_Video, cap_, grabberF_, nullF_); log(format(L"  [ds] RenderStream(qualsiasi) hr=0x%08lX", (unsigned long)hr)); }
     if (FAILED(hr)) {
         err = format(L"Impossibile collegare la periferica (errore 0x%08lX).\nIl formato scelto potrebbe richiedere un decodificatore non installato: prova un altro formato (MJPG o YUY2).", (unsigned long)hr);
         return false;
@@ -316,7 +328,10 @@ bool DsCapture::start(int formatIdx, HWND notifyWnd, UINT notifyMsg, DsFrameCall
     memset(&mt, 0, sizeof mt);
     bool bottomUp = true;
     double fps = 0;
-    if (FAILED(grabber->GetConnectedMediaType(&mt)) || !videoInfo(&mt, w_, h_, fps, &bottomUp)) {
+    HRESULT hrm = grabber->GetConnectedMediaType(&mt);
+    log(format(L"  [ds] GetConnectedMediaType hr=0x%08lX tipo=%ls sottotipo=%ls formato=%ls cb=%lu", (unsigned long)hrm,
+               guidStr(mt.majortype).c_str(), guidStr(mt.subtype).c_str(), guidStr(mt.formattype).c_str(), (unsigned long)mt.cbFormat));
+    if (FAILED(hrm) || !videoInfo(&mt, w_, h_, fps, &bottomUp)) {
         clearMediaType(mt);
         err = L"Formato video non riconosciuto.";
         return false;
