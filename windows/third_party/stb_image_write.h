@@ -550,7 +550,7 @@ static void stbiw__write_pixels(stbi__write_context *s, int rgb_dir, int vdir, i
    }
 
    if (stride_in_bytes == 0)
-      stride_in_bytes = x*comp;
+      stride_in_bytes = (ptrdiff_t) x * (ptrdiff_t) comp;
 
    for (; j != j_end; j += vdir) {
       for (i=0; i < x; ++i) {
