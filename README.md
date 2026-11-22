@@ -150,4 +150,4 @@ packaging/              script per compilare il .deb in un container di un'altra
 
 ## Licenza
 
-GPL-3.0-or-later — © 2026 FabioNET.
+GPL-3.0-or-later — © 2026 FabioNET
